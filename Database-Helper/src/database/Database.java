@@ -249,12 +249,12 @@ public class Database {
 		while (iterator.hasNext()) {
 			Map.Entry<String, String> mapEntry = iterator.next();
 			if (!where) {
-				queryWhere += mapEntry.getKey() + " " + operator + " '"
-						+ mapEntry.getValue() + "'";
+				queryWhere += mapEntry.getKey().replaceAll("'", "\\\\'") + " " + operator + " '"
+						+ mapEntry.getValue().replaceAll("'", "\\\\'") + "'";
 				where = true;
 			} else {
-				queryWhere += " " + type + " " + mapEntry.getKey() + " "
-						+ operator + " '" + mapEntry.getValue() + "'";
+				queryWhere += " " + type + " " + mapEntry.getKey().replaceAll("'", "\\\\'") + " "
+						+ operator + " '" + mapEntry.getValue().replaceAll("'", "\\\\'") + "'";
 			}
 
 		}
@@ -266,12 +266,12 @@ public class Database {
 		while (iterator.hasNext()) {
 			Map.Entry<String, String> mapEntry = iterator.next();
 			if (!set) {
-				querySet += mapEntry.getKey() + " = '" + mapEntry.getValue()
+				querySet += mapEntry.getKey().replaceAll("'", "\\\\'") + " = '" + mapEntry.getValue().replaceAll("'", "\\\\'")
 						+ "'";
 				set = true;
 			} else {
-				querySet += ", " + mapEntry.getKey() + " = '"
-						+ mapEntry.getValue() + "'";
+				querySet += ", " + mapEntry.getKey().replaceAll("'", "\\\\'") + " = '"
+						+ mapEntry.getValue().replaceAll("'", "\\\\'") + "'";
 			}
 
 		}

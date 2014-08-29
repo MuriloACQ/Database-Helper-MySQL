@@ -10,6 +10,7 @@
 
 package facade;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -75,6 +76,7 @@ public class ObjectRelational {
 	 * @throws InvocationTargetException
 	 */
 	public Map<String, String> export() throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
+		if(fields == null) fields = this.getClass().getDeclaredFields();
 		Map<String, String> map = new HashMap<String, String>();
 		for(Field field : fields) {
 			String columnName = getColumnName(field.getName());
