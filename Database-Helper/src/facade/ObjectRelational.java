@@ -85,7 +85,7 @@ public class ObjectRelational {
 		}
 	}
 	
-	private String getFieldValueAsString(Field field) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
+	public String getFieldValueAsString(Field field) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
 		String result;
 		if (field.getModifiers() == 1) {
 			result = ""+field.get(this);
