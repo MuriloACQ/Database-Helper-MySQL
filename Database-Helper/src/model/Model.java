@@ -43,7 +43,7 @@ public class Model<T extends ObjectRelational> {
 	}
 	
 	/**
-	 * Select
+	 * Get a specific T object
 	 * @param uniqueIdentifier (database - column format)
 	 * @param value
 	 * @return T object
