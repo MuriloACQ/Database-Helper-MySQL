@@ -1,6 +1,7 @@
 /**
  * This is a standard class to use Object Relational Mapping
  * Use generic constructor in subclasses to configure prefix and caseMod
+ * Avoid primitive types in attributes of the subclasses
  * 
  * @author Murilo Augusto Castagnoli de Quadros
  * @since 2014
