@@ -20,7 +20,6 @@ public class Teste extends ObjectRelational {
 	}
 
 	public Teste(){
-		super();
 		setCaseMod(SNAKEUPPERCASE_TO_CAMELCASE);
 		setPrefix("");
 	}

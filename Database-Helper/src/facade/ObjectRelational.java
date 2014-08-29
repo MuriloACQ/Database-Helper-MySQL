@@ -1,3 +1,11 @@
+/**
+ * This is a standard class to use Object Relational Mapping
+ * 
+ * @author Murilo Augusto Castagnoli de Quadros
+ * @since 2014
+ * @email macquadros@gmail.com
+ */
+
 package facade;
 
 import java.lang.reflect.Field;

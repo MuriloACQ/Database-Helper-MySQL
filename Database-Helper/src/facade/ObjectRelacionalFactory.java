@@ -1,3 +1,12 @@
+/**
+ * This is a easy way to create many ObjectRelacional instances.
+ * If you want to use this factory you need to define a generic constructor in your target class
+ * 
+ * @author Murilo Augusto Castagnoli de Quadros
+ * @since 2014
+ * @email macquadros@gmail.com
+ */
+
 package facade;
 
 import java.lang.reflect.InvocationTargetException;
