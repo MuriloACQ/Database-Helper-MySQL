@@ -73,7 +73,7 @@ public class ObjectRelational {
 	}
 	
 	public Field getField (String fieldName) throws NoSuchFieldException, SecurityException {
-		return this.getClass().getField(fieldName);
+		return this.getClass().getDeclaredField(fieldName);
 	}
 	
 	public void setFieldValue(Field field, Object value) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
@@ -88,10 +88,10 @@ public class ObjectRelational {
 	private String getFieldValueAsString(Field field) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
 		String result;
 		if (field.getModifiers() == 1) {
-			result = field.get(this).toString();
+			result = ""+field.get(this);
 		} else {
 			Method method = this.getClass().getMethod(convertToGetMethod(field));
-			result = method.invoke(this).toString();
+			result = ""+method.invoke(this);
 		}
 		return result;
 	}

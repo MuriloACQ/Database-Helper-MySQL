@@ -2,6 +2,7 @@ package facade;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import model.Model;
 
@@ -11,14 +12,15 @@ import database.Connector;
 
 public class Teste extends ObjectRelational {
 
-	public int id;
-	public String name;
-	public String username;
-	public String password;
+	private Integer id;
+	private String name;
+	private String email;
+	private Timestamp ini;
 	
 	public Teste(){
+		super();
 		setCaseMod(SNAKEUPPERCASE_TO_CAMELCASE);
-		setPrefix("");
+		setPrefix("USR_");
 	}
 	
 	public Teste(ResultSet resultSet) throws SQLException,
@@ -26,33 +28,62 @@ public class Teste extends ObjectRelational {
 		super(resultSet);
 	}
 	
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
+	public Timestamp getIni() {
+		return ini;
+	}
+
+	public void setIni(Timestamp ini) {
+		this.ini = ini;
+	}
+
 	public static void main(String[] args) {
 		
-		Connector.setSchema("tcc");
-		Model<Teste> model = new Model<Teste>("user", "id", Teste.class);
+		Connector.setSchema("teste_bd");
+		Model<Teste> model = new Model<Teste>("users", "id", Teste.class);
 		
 		Teste teste = new Teste();
-		teste.id = 2;
 		teste.name = "Teste de update";
-		teste.username = "aeeee";
-		teste.password = "3232fsfsef";
+		teste.email = "aeeee";
 		
 		try {
-			model.delete(teste);
+			teste = model.insertReturningUpdatedObject(teste);
+			System.out.print(teste);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			System.out.print(teste);
 			e.printStackTrace();
 		}
 		
-		try {
-			System.out.print(model.list());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		
-		
-		
+//		try {
+//			System.out.print(model.list());
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} 
 		
 	}
 

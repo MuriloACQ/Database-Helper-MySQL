@@ -53,10 +53,15 @@ public class Model<T extends ObjectRelational> {
 		setId(id, t);
 	}
 	
-	public Integer insertReturningGeneratedId (T t) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException, NoSuchFieldException {
+	public Integer insertReturningGeneratedId(T t) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException, NoSuchFieldException {
 		Integer id = db.insert(removeNullValues(t.export()), table);
 		setId(id, t);
 		return id;
+	}
+	
+	public T insertReturningUpdatedObject(T t) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException, NoSuchFieldException, InstantiationException, SQLException {
+		Integer id = insertReturningGeneratedId(t);
+		return get(t.getColumnName(primaryKey), id.toString());
 	}
 	
 	public void update (T t) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
