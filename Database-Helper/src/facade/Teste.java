@@ -12,7 +12,7 @@ import database.Database;
 
 public class Teste extends ObjectRelational {
 
-	private int id;
+	public int id;
 	public String name;
 	
 	public void setId(Integer id) {
@@ -21,6 +21,8 @@ public class Teste extends ObjectRelational {
 
 	public Teste(){
 		super();
+		setCaseMod(SNAKEUPPERCASE_TO_CAMELCASE);
+		setPrefix("");
 	}
 	
 	public Teste(ResultSet resultSet) throws SQLException,
@@ -38,26 +40,8 @@ public class Teste extends ObjectRelational {
 		ObjectRelacionalFactory<Teste> factory = new ObjectRelacionalFactory<Teste>(Teste.class);
 		try {
 			List<Teste> lista = factory.getList(resultSet);
-			System.out.println(lista.get(0).name);
-		} catch (SQLException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
+			System.out.println(lista.get(0).export());
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

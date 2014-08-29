@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.mysql.jdbc.ResultSet;
 
@@ -29,18 +31,31 @@ public class ObjectRelational {
 		this.prefix = prefix;
 	}
 	
+	/**
+	 * Database format to Java Object format
+	 * @param mod values {SNAKELOWERCASE_TO_CAMELCASE, SNAKEUPPERCASE_TO_CAMELCASE, UPPERCASE_TO_LOWERCASE, NONE}
+	 */
 	public void setCaseMod(int mod) {
 		selectedCase = mod;
 	}
 	
 	public void initialize(ResultSet resultSet) throws IllegalArgumentException, IllegalAccessException, SQLException, NoSuchMethodException, SecurityException, InvocationTargetException {
-		selectedCase = NONE;
 		fields = this.getClass().getDeclaredFields();
-		for (Field field: fields){
+		for (Field field : fields){
 			String columnName = setSelectedPrefix(field.getName());
 			columnName = getStringInSelectedCase(columnName);
 			setFieldValue(field, resultSet.getObject(columnName));
 		}
+	}
+	
+	public Map<String, String> export() throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
+		Map<String, String> map = new HashMap<String, String>();
+		for(Field field : fields) {
+			String columnName = setSelectedPrefix(field.getName());
+			columnName = getStringInSelectedCase(columnName);
+			map.put(columnName, getFieldValueAsString(field));
+		}
+		return map;
 	}
 	
 	private void setFieldValue(Field field, Object value) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
@@ -52,12 +67,27 @@ public class ObjectRelational {
 		}
 	}
 	
+	private String getFieldValueAsString(Field field) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
+		String result;
+		if (field.getModifiers() == 1) {
+			result = field.get(this).toString();
+		} else {
+			Method method = this.getClass().getMethod(convertToGetMethod(field));
+			result = method.invoke(this).toString();
+		}
+		return result;
+	}
+	
 	private String convertToSetMethod (Field field) {
 		return "set" + firstLetterToUpperCase(field.getName());
 	}
 	
-	private String camelToSnakeCase(String snakecase) {
-		return snakecase.replaceAll("([A-Z][a-z]+)", "$1_");
+	private String convertToGetMethod (Field field) {
+		return "get" + firstLetterToUpperCase(field.getName());
+	}
+	
+	private String camelToSnakeCase(String camelcase) {
+		return camelcase.replaceAll("([A-Z][a-z])", "_$1");
 	}
 	
 	private String getStringInSelectedCase(String string) {
@@ -87,6 +117,27 @@ public class ObjectRelational {
 	
 	private String firstLetterToUpperCase (String string) {
 		return string.substring(0,1).toUpperCase() + string.substring(1); 
+	}
+	
+	@Override
+	public String toString() {
+		String string = getClass().toString();
+		string = string.concat(" {");
+		for(Field field : fields) {
+			string = string.concat(field.getName());
+			string = string.concat("=");
+			try {
+				string = string.concat(getFieldValueAsString(field));
+			} catch (IllegalArgumentException | IllegalAccessException
+					| NoSuchMethodException | SecurityException
+					| InvocationTargetException e) {
+				string = string.concat("[error: the value is not accessible]");
+				e.printStackTrace();
+			}
+			string = string.concat(", ");
+		}
+		string = string.concat("}");
+		return string.replace(", }", "}");
 	}
 
 }
