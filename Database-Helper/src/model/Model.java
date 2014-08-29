@@ -1,3 +1,11 @@
+/**
+ * This is a generic model class to link a subclass of ObjectRelacional with a database table
+ * 
+ * @author Murilo Augusto Castagnoli de Quadros
+ * @since 2014
+ * @email macquadros@gmail.com
+ */
+
 package model;
 
 import java.lang.reflect.InvocationTargetException;
