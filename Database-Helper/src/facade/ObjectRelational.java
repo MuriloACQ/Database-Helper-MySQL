@@ -1,5 +1,6 @@
 /**
  * This is a standard class to use Object Relational Mapping
+ * Use generic constructor in subclasses to configure prefix and caseMod
  * 
  * @author Murilo Augusto Castagnoli de Quadros
  * @since 2014
@@ -28,16 +29,7 @@ public class ObjectRelational {
 	private Field[] fields;
 	private String prefix;
 	private int selectedCase;
-	
-	public ObjectRelational() {
-		fields = this.getClass().getDeclaredFields();
-	}
-	
-	public ObjectRelational(ResultSet resultSet) throws SQLException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
-		this();
-		initialize(resultSet);
-	}
-	
+
 	/**
 	 * Set a prefix in each column of table
 	 * @param prefix
@@ -65,6 +57,7 @@ public class ObjectRelational {
 	 * @throws InvocationTargetException
 	 */
 	public void initialize(ResultSet resultSet) throws IllegalArgumentException, IllegalAccessException, SQLException, NoSuchMethodException, SecurityException, InvocationTargetException {
+		fields = this.getClass().getDeclaredFields();
 		for (Field field : fields){
 			String columnName = getColumnName(field.getName());
 			setFieldValue(field, resultSet.getObject(columnName));
