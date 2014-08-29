@@ -29,9 +29,12 @@ public class ObjectRelational {
 	private String prefix;
 	private int selectedCase;
 	
-	public ObjectRelational() {}
+	public ObjectRelational() {
+		fields = this.getClass().getDeclaredFields();
+	}
 	
 	public ObjectRelational(ResultSet resultSet) throws SQLException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
+		this();
 		initialize(resultSet);
 	}
 	
@@ -48,10 +51,8 @@ public class ObjectRelational {
 	}
 	
 	public void initialize(ResultSet resultSet) throws IllegalArgumentException, IllegalAccessException, SQLException, NoSuchMethodException, SecurityException, InvocationTargetException {
-		fields = this.getClass().getDeclaredFields();
 		for (Field field : fields){
-			String columnName = setSelectedPrefix(field.getName());
-			columnName = getStringInSelectedCase(columnName);
+			String columnName = getColumnName(field.getName());
 			setFieldValue(field, resultSet.getObject(columnName));
 		}
 	}
@@ -59,14 +60,23 @@ public class ObjectRelational {
 	public Map<String, String> export() throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
 		Map<String, String> map = new HashMap<String, String>();
 		for(Field field : fields) {
-			String columnName = setSelectedPrefix(field.getName());
-			columnName = getStringInSelectedCase(columnName);
+			String columnName = getColumnName(field.getName());
 			map.put(columnName, getFieldValueAsString(field));
 		}
 		return map;
 	}
 	
-	private void setFieldValue(Field field, Object value) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
+	public String getColumnName(String fieldName) {
+		String columnName = setSelectedPrefix(fieldName);
+		columnName = getStringInSelectedCase(columnName);
+		return columnName;
+	}
+	
+	public Field getField (String fieldName) throws NoSuchFieldException, SecurityException {
+		return this.getClass().getField(fieldName);
+	}
+	
+	public void setFieldValue(Field field, Object value) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
 		if (field.getModifiers() == 1) {
 			field.set(this, value);
 		} else {
@@ -126,7 +136,7 @@ public class ObjectRelational {
 	private String firstLetterToUpperCase (String string) {
 		return string.substring(0,1).toUpperCase() + string.substring(1); 
 	}
-	
+		
 	@Override
 	public String toString() {
 		String string = getClass().toString();
