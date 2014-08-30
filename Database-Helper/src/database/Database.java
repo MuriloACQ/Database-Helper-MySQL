@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.ResultSet;
@@ -22,7 +21,6 @@ import com.mysql.jdbc.Statement;
 
 public class Database {
 
-	private static Logger LOGGER;
 	private Connection connection;
 
 	private String queryWhere;
@@ -38,7 +36,6 @@ public class Database {
 	private boolean limit;
 
 	public Database(Connection conn) {
-		LOGGER = Logger.getLogger(this.getClass().toString());
 		connection = conn;
 		clear();
 	}
@@ -59,7 +56,6 @@ public class Database {
 			}
 			stm.close();
 		} catch (SQLException e) {
-			LOGGER.warning(e.getMessage());
 			e.printStackTrace();
 		}
 		clear();
@@ -76,7 +72,6 @@ public class Database {
 			stm.execute(query);
 			stm.close();
 		} catch (SQLException e) {
-			LOGGER.warning(e.getMessage());
 			e.printStackTrace();
 		}
 		clear();
@@ -94,7 +89,6 @@ public class Database {
 			stm = (Statement) connection.createStatement();
 			resultSet = (ResultSet) stm.executeQuery(getQuery());
 		} catch (SQLException e) {
-			LOGGER.warning(e.getMessage());
 			e.printStackTrace();
 		}
 		clear();
@@ -110,10 +104,27 @@ public class Database {
 			stm.execute(query);
 			stm.close();
 		} catch (SQLException e) {
-			LOGGER.warning(e.getMessage());
 			e.printStackTrace();
 		}
 		clear();
+	}
+	
+	public ResultSet join(String tableA, String tableB, String columnA, String columnB, String type){
+		if (!select) {
+			querySelect += "* ";
+			select = true;
+		}
+		querySelect += " FROM " + tableA + " " + type + " JOIN " + tableB + " ON " + tableA + "." + columnA + " = " + tableB + "." + columnB + " ";
+		Statement stm = null;
+		ResultSet resultSet = null;
+		try {
+			stm = (Statement) connection.createStatement();
+			resultSet = (ResultSet) stm.executeQuery(getQuery());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		clear();
+		return resultSet;
 	}
 
 	public ResultSet query(String query) {
@@ -123,10 +134,33 @@ public class Database {
 			stm = (Statement) connection.createStatement();
 			resultSet = (ResultSet) stm.executeQuery(query);
 		} catch (SQLException e) {
-			LOGGER.warning(e.getMessage());
 			e.printStackTrace();
 		}
 		return resultSet;
+	}
+	
+	public ResultSet innerJoin(String tableA, String tableB, String columnA, String columnB) {
+		return join(tableA, tableB, columnA, columnB, "INNER");
+	}
+	
+	public ResultSet innerJoin(String tableA, String tableB, String column) {
+		return innerJoin(tableA, tableB, column, column);
+	}
+	
+	public ResultSet leftJoin(String tableA, String tableB, String columnA, String columnB) {
+		return join(tableA, tableB, columnA, columnB, "LEFT");
+	}
+	
+	public ResultSet leftJoin(String tableA, String tableB, String column) {
+		return leftJoin(tableA, tableB, column, column);
+	}
+	
+	public ResultSet rightJoin(String tableA, String tableB, String columnA, String columnB) {
+		return join(tableA, tableB, columnA, columnB, "RIGHT");
+	}
+	
+	public ResultSet rightJoin(String tableA, String tableB, String column) {
+		return rightJoin(tableA, tableB, column, column);
 	}
 	
 	public void select(String data) {
