@@ -43,6 +43,28 @@ public class Model<T extends ObjectRelational> {
 	}
 	
 	/**
+	 * Get a updated instance of T
+	 * @param t
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws InvocationTargetException
+	 * @throws SQLException
+	 * @throws NoSuchFieldException
+	 */
+	public T get(T t) throws IllegalArgumentException, IllegalAccessException, InstantiationException, NoSuchMethodException, SecurityException, InvocationTargetException, SQLException, NoSuchFieldException {
+		db.where(t.getColumnName(primaryKey), t.getFieldValueAsString(t.getField(primaryKey)));
+		List<T> list = factory.getList(db.get(table));
+		if(list.size() == 1) {
+			return list.get(0);
+		}
+		return null;
+	}
+	
+	/**
 	 * Get a specific T object
 	 * @param uniqueIdentifier (database - column format)
 	 * @param value
