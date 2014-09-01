@@ -32,31 +32,31 @@ public class ClassLoader {
 		String classPath = "";
 		if (packet != null) {
 			classPath += packet + ".";
-			filePath += packet.replaceAll(".", "/");
+			filePath += packet.replaceAll("\\.", "/");
 		}
 		filePath += "/" + className + ".java";
 		File file = new File(filePath);
 		if (!file.exists()) {
 			file.createNewFile();
+			FileOutputStream fos;
+			fos = new FileOutputStream(file);
+			fos.write(declaration.getBytes());
+			fos.flush();
+			fos.close();
+			JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+			if (compiler == null) {
+				throw new CompilerNotFoundException("Maybe you should use jdk to running application instead of jre");
+			}
+			StandardJavaFileManager standardJavaFileManager = compiler
+					.getStandardFileManager(null, null, null);
+			standardJavaFileManager.setLocation(StandardLocation.CLASS_OUTPUT,
+					Arrays.asList(new File(binaryPath)));
+			CompilationTask compilationTask = compiler.getTask(null,
+					standardJavaFileManager, null, null, null,
+					standardJavaFileManager.getJavaFileObjectsFromFiles(Arrays
+							.asList(file)));
+			compilationTask.call();
 		}
-		FileOutputStream fos;
-		fos = new FileOutputStream(file);
-		fos.write(declaration.getBytes());
-		fos.flush();
-		fos.close();
-		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		if (compiler == null) {
-			throw new CompilerNotFoundException("Maybe you should use jdk to running application instead of jre");
-		}
-		StandardJavaFileManager standardJavaFileManager = compiler
-				.getStandardFileManager(null, null, null);
-		standardJavaFileManager.setLocation(StandardLocation.CLASS_OUTPUT,
-				Arrays.asList(new File(binaryPath)));
-		CompilationTask compilationTask = compiler.getTask(null,
-				standardJavaFileManager, null, null, null,
-				standardJavaFileManager.getJavaFileObjectsFromFiles(Arrays
-						.asList(file)));
-		compilationTask.call();
 		return Class.forName(classPath+className);
 	}
 }
