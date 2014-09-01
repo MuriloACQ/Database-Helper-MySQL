@@ -32,6 +32,10 @@ public class Connector {
 	public static void setSchema(String schemaname) {
 		schema = schemaname;
 	}
+	
+	public static String getSchema() {
+		return schema;
+	}
 
 	public static void setServer(String servername) {
 		server = servername;

@@ -1,4 +1,4 @@
-package loader;
+package facade.loader;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -11,7 +11,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
-import loader.exceptions.CompilerNotFoundException;
+import facade.loader.exceptions.CompilerNotFoundException;
 
 public class ClassLoader {
 

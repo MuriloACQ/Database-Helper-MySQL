@@ -1,12 +1,12 @@
-package loader;
+package facade.loader;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import facade.ObjectRelational;
-import loader.exceptions.CompilerNotFoundException;
-import loader.exceptions.ObjectRelationalBuilderException;
+import facade.loader.exceptions.CompilerNotFoundException;
+import facade.loader.exceptions.ObjectRelationalBuilderException;
 
 public class ObjectRelationalBuilder {
 
@@ -74,7 +74,12 @@ public class ObjectRelationalBuilder {
 	}
 
 	private String assemble() {
-		String clazz = "import facade.ObjectRelational;\n\n";
+		String clazz = "import facade.ObjectRelational;\n";
+		clazz += "import java.math.BigDecimal;\n";
+		clazz += "import java.math.BigInteger;\n";
+		clazz += "import java.sql.Date;\n";
+		clazz += "import java.sql.Timestamp;\n";
+		clazz += "import java.sql.Time;\n\n";
 		if(packet != null) clazz += "packet "+ packet+";\n\n";
 		clazz += "public class ";
 		clazz += className + " extends ObjectRelational { \n\n";
