@@ -1,21 +1,23 @@
 package facade.loader;
 
+import static utils.Utils.firstLetterToUpperCase;
+import static utils.Utils.snakeToCamelCase;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import facade.ObjectRelational;
 import facade.loader.exceptions.CompilerNotFoundException;
 import facade.loader.exceptions.ObjectRelationalBuilderException;
 
-import static utils.Utils.snakeToCamelCase;
-import static utils.Utils.firstLetterToUpperCase;
-
 public class ObjectRelationalBuilder {
 
 	private String className;
 	private List<String> types;
 	private List<String> names;
+	private HashSet<String> imports;
 	private String pack;
 	private String binaryPath;
 	private boolean forceUpdate;
@@ -25,8 +27,9 @@ public class ObjectRelationalBuilder {
 	public ObjectRelationalBuilder() {
 		types = new ArrayList<String>();
 		names = new ArrayList<String>();
-		binaryPath = "bin";
+		imports = new HashSet<String>();
 		forceUpdate = false;
+		binaryPath = "bin";
 	}
 	
 	public void forceUpdate() {
@@ -47,8 +50,10 @@ public class ObjectRelationalBuilder {
 		if (!isValidAttributeOrClassName(name)) {
 			throw new ObjectRelationalBuilderException("Invalid attribute name");
 		}
-		types.add(convertPrimitiveToClass(type));
-		names.add(name);
+		type = convertPrimitiveToClass(type);
+		importType(type);
+		types.add(type);
+		names.add(snakeToCamelCase(name));
 	}
 	
 	public void setPackage(String pack) {
@@ -86,12 +91,10 @@ public class ObjectRelationalBuilder {
 		String clazz = "";
 		if(pack != null) clazz += "package "+ pack+";\n\n";
 		clazz += "import facade.ObjectRelational;\n";
-		clazz += "import java.math.BigDecimal;\n";
-		clazz += "import java.math.BigInteger;\n";
-		clazz += "import java.sql.Date;\n";
-		clazz += "import java.sql.Timestamp;\n";
-		clazz += "import java.sql.Time;\n\n";
-		clazz += "public class ";
+		for (String importEntry : imports) {
+			clazz += "import "+ importEntry +";\n";
+		}
+		clazz += "\npublic class ";
 		clazz += className + " extends ObjectRelational { \n\n";
 		clazz += "\tpublic "+className+"() {\n";
 		clazz += "\t\tsuper();\n";
@@ -134,6 +137,20 @@ public class ObjectRelationalBuilder {
 			type = "Long";
 		}
 		return type;
+	}
+	
+	private void importType(String type) {
+		if (type.equals("Timestamp")) {
+			imports.add("java.sql.Timestamp");
+		} else if (type.equals("Time")) {
+			imports.add("java.sql.Time");
+		} else if (type.equals("Date")) {
+			imports.add("java.sql.Date");
+		} else if (type.equals("BigInteger")) {
+			imports.add("java.math.BigInteger");
+		} else if (type.equals("BigDecimal")) {
+			imports.add("java.math.BigDecimal");
+		}
 	}
 
 }
