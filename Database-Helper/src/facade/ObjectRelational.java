@@ -19,6 +19,9 @@ import java.util.Map;
 
 import com.mysql.jdbc.ResultSet;
 
+import static utils.Utils.firstLetterToUpperCase;
+import static utils.Utils.camelToSnakeCase;
+
 public class ObjectRelational {
 	
 	public static final int 
@@ -119,7 +122,7 @@ public class ObjectRelational {
 	public void setFieldValue(Field field, Object value) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
 		if (field.getModifiers() == 1) {
 			field.set(this, value);
-		} else {
+		} else if(value != null){
 			Method method = this.getClass().getMethod(convertToSetMethod(field), value.getClass());
 			method.invoke(this, value);
 		}
@@ -165,15 +168,6 @@ public class ObjectRelational {
 	}
 	
 	/**
-	 * Convert a camelcase string in a snakecase string
-	 * @param camelcase
-	 * @return snakecase
-	 */
-	private String camelToSnakeCase(String camelcase) {
-		return camelcase.replaceAll("([A-Z][a-z])", "_$1");
-	}
-	
-	/**
 	 * Convert a string to be compatible with database columns
 	 * @param string
 	 * @return string in the selected format
@@ -206,15 +200,6 @@ public class ObjectRelational {
 			columnName = prefix.concat(columnName);
 		}
 		return columnName;
-	}
-	
-	/**
-	 * Make the first letter uppercase
-	 * @param string
-	 * @return string with first letter uppercase 
-	 */
-	private String firstLetterToUpperCase (String string) {
-		return string.substring(0,1).toUpperCase() + string.substring(1); 
 	}
 		
 	@Override

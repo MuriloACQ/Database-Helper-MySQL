@@ -16,23 +16,23 @@ import facade.loader.exceptions.CompilerNotFoundException;
 public class ClassLoader {
 
 	private String binaryPath;
-	private String packet;
+	private String pack;
 
 	public void setBinaryPath(String binaryPath) {
 		this.binaryPath = binaryPath;
 	}
 
-	public void setPacket(String packet) {
-		this.packet = packet;
+	public void setPackage(String pack) {
+		this.pack = pack;
 	}
 
 	public Class<?> newClass(String className, String declaration)
 			throws IOException, CompilerNotFoundException, ClassNotFoundException {
 		String filePath = "src";
 		String classPath = "";
-		if (packet != null) {
-			classPath += packet + ".";
-			filePath += packet.replaceAll("\\.", "/");
+		if (pack != null) {
+			classPath += pack + ".";
+			filePath += "/" + pack.replaceAll("\\.", "/");
 		}
 		filePath += "/" + className + ".java";
 		File file = new File(filePath);
@@ -59,4 +59,5 @@ public class ClassLoader {
 		}
 		return Class.forName(classPath+className);
 	}
+	
 }

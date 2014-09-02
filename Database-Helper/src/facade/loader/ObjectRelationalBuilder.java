@@ -8,12 +8,15 @@ import facade.ObjectRelational;
 import facade.loader.exceptions.CompilerNotFoundException;
 import facade.loader.exceptions.ObjectRelationalBuilderException;
 
+import static utils.Utils.snakeToCamelCase;
+import static utils.Utils.firstLetterToUpperCase;
+
 public class ObjectRelationalBuilder {
 
 	private String className;
 	private List<String> types;
 	private List<String> names;
-	private String packet;
+	private String pack;
 	private String binaryPath;
 	
 	private Integer selectedCase;
@@ -29,7 +32,7 @@ public class ObjectRelationalBuilder {
 		if(!isValidAttributeOrClassName(className)){
 			throw new ObjectRelationalBuilderException("Invalid class name");
 		}
-		this.className = firstLetterToUpperCase(className);
+		this.className = firstLetterToUpperCase(snakeToCamelCase(className));
 	}
 
 	public void setAttribute(String type, String name) throws ObjectRelationalBuilderException {
@@ -43,8 +46,8 @@ public class ObjectRelationalBuilder {
 		names.add(name);
 	}
 	
-	public void setPacket(String packet) {
-		this.packet = packet;
+	public void setPackage(String pack) {
+		this.pack = pack;
 	}
 
 	public void setBinayPath(String binayPath) {
@@ -69,18 +72,19 @@ public class ObjectRelationalBuilder {
 		}
 		ClassLoader classLoader = new ClassLoader();
 		classLoader.setBinaryPath(binaryPath);
-		classLoader.setPacket(packet);
+		classLoader.setPackage(pack);
 		return (Class<ObjectRelational>) classLoader.newClass(className, assemble());
 	}
 
 	private String assemble() {
-		String clazz = "import facade.ObjectRelational;\n";
+		String clazz = "";
+		if(pack != null) clazz += "package "+ pack+";\n\n";
+		clazz += "import facade.ObjectRelational;\n";
 		clazz += "import java.math.BigDecimal;\n";
 		clazz += "import java.math.BigInteger;\n";
 		clazz += "import java.sql.Date;\n";
 		clazz += "import java.sql.Timestamp;\n";
 		clazz += "import java.sql.Time;\n\n";
-		if(packet != null) clazz += "packet "+ packet+";\n\n";
 		clazz += "public class ";
 		clazz += className + " extends ObjectRelational { \n\n";
 		clazz += "\tpublic "+className+"() {\n";
@@ -124,10 +128,6 @@ public class ObjectRelationalBuilder {
 			type = "Long";
 		}
 		return type;
-	}
-	
-	private String firstLetterToUpperCase (String string) {
-		return string.substring(0,1).toUpperCase() + string.substring(1); 
 	}
 
 }

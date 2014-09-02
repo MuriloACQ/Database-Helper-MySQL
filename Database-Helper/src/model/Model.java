@@ -26,9 +26,11 @@ public class Model<T extends ObjectRelational> {
 	private ObjectRelacionalFactory<T> factory;
 	private Database db;
 	private String primaryKey;
+	private Class<T> reference;
 	
 	public Model(String table, String PrimaryKeyAttributeName, Class<T> reference) {
 		this.table = table;
+		this.reference = reference;
 		primaryKey = PrimaryKeyAttributeName;
 		db = new Database(Connector.getConnection());
 		factory = new ObjectRelacionalFactory<T>(reference);
@@ -40,6 +42,16 @@ public class Model<T extends ObjectRelational> {
 	 */
 	public Database getDatabase() {
 		return db;
+	}
+	
+	/**
+	 * Get a new instance of T class
+	 * @return new T object
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	public T newInstance() throws InstantiationException, IllegalAccessException{
+		return (T) reference.newInstance();
 	}
 	
 	/**
@@ -182,9 +194,10 @@ public class Model<T extends ObjectRelational> {
 	 * @throws InvocationTargetException
 	 */
 	public void update (T t) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
-		Map<String, String> export = t.export();
+		Map<String, String> export = removeNullValues(t.export());
 		String primaryKey = t.getColumnName(this.primaryKey);
 		db.where(primaryKey, export.get(primaryKey));
+		export.remove(primaryKey);
 		db.update(export, table);
 	}
 	

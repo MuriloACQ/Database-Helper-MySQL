@@ -81,4 +81,18 @@ public class Metadata {
 		}
 		return classes;
 	}
+	
+	public String getPrimaryKey(String table){
+		String pk = null;
+		try {
+			ResultSet resultSet = (ResultSet) databaseMetaData.getPrimaryKeys(null,
+					schema, table);
+			if (resultSet.next()) {
+				pk = resultSet.getString("COLUMN_NAME");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return pk;
+	}
 }

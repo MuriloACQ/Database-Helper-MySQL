@@ -282,11 +282,11 @@ public class Database {
 				.iterator();
 		while (iterator.hasNext()) {
 			Map.Entry<String, String> mapEntry = iterator.next();
-			if (!where) {
+			if (!where && mapEntry.getValue() != null) { 
 				queryWhere += mapEntry.getKey().replaceAll("'", "\\\\'") + " " + operator + " '"
 						+ mapEntry.getValue().replaceAll("'", "\\\\'") + "'";
 				where = true;
-			} else {
+			} else if(mapEntry.getValue() != null) {
 				queryWhere += " " + type + " " + mapEntry.getKey().replaceAll("'", "\\\\'") + " "
 						+ operator + " '" + mapEntry.getValue().replaceAll("'", "\\\\'") + "'";
 			}
@@ -299,11 +299,11 @@ public class Database {
 				.iterator();
 		while (iterator.hasNext()) {
 			Map.Entry<String, String> mapEntry = iterator.next();
-			if (!set) {
+			if (!set && mapEntry.getValue() != null) {
 				querySet += mapEntry.getKey().replaceAll("'", "\\\\'") + " = '" + mapEntry.getValue().replaceAll("'", "\\\\'")
 						+ "'";
 				set = true;
-			} else {
+			} else if(mapEntry.getValue() != null) {
 				querySet += ", " + mapEntry.getKey().replaceAll("'", "\\\\'") + " = '"
 						+ mapEntry.getValue().replaceAll("'", "\\\\'") + "'";
 			}
