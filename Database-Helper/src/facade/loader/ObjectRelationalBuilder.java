@@ -18,7 +18,7 @@ public class ObjectRelationalBuilder {
 	private List<String> names;
 	private String pack;
 	private String binaryPath;
-	
+	private boolean forceUpdate;
 	private Integer selectedCase;
 	private String prefix;
 
@@ -26,6 +26,11 @@ public class ObjectRelationalBuilder {
 		types = new ArrayList<String>();
 		names = new ArrayList<String>();
 		binaryPath = "bin";
+		forceUpdate = false;
+	}
+	
+	public void forceUpdate() {
+		forceUpdate = true;
 	}
 
 	public void setClassName(String className) throws ObjectRelationalBuilderException {
@@ -71,6 +76,7 @@ public class ObjectRelationalBuilder {
 			throw new ObjectRelationalBuilderException("Cannot generate a subclass of ObjectRelational without attributes");
 		}
 		ClassLoader classLoader = new ClassLoader();
+		if(forceUpdate) classLoader.forceUpdate();
 		classLoader.setBinaryPath(binaryPath);
 		classLoader.setPackage(pack);
 		return (Class<ObjectRelational>) classLoader.newClass(className, assemble());

@@ -17,6 +17,11 @@ public class ClassLoader {
 
 	private String binaryPath;
 	private String pack;
+	private boolean forceUpdate;
+	
+	public ClassLoader() {
+		forceUpdate = false;
+	}
 
 	public void setBinaryPath(String binaryPath) {
 		this.binaryPath = binaryPath;
@@ -24,6 +29,10 @@ public class ClassLoader {
 
 	public void setPackage(String pack) {
 		this.pack = pack;
+	}
+	
+	public void forceUpdate(){
+		forceUpdate = true;
 	}
 
 	public Class<?> newClass(String className, String declaration)
@@ -36,7 +45,7 @@ public class ClassLoader {
 		}
 		filePath += "/" + className + ".java";
 		File file = new File(filePath);
-		if (!file.exists()) {
+		if (!file.exists() || forceUpdate) {
 			file.createNewFile();
 			FileOutputStream fos;
 			fos = new FileOutputStream(file);

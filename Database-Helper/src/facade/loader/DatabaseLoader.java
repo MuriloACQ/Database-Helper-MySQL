@@ -21,6 +21,7 @@ public class DatabaseLoader {
 	private ObjectRelationalBuilder objectRelationalBuilder;
 	private String pack;
 	private Integer selecetedCase;
+	private boolean forceUpdate;
 
 	private List<String> tables;
 	private List<Class<ObjectRelational>> classes;
@@ -28,6 +29,7 @@ public class DatabaseLoader {
 	public DatabaseLoader() {
 		metadata = new Metadata(Connector.getConnection(),
 				Connector.getSchema());
+		forceUpdate = false;
 	}
 
 	public void setPackage(String pack) {
@@ -38,6 +40,10 @@ public class DatabaseLoader {
 		selecetedCase = mod;
 	}
 
+	public void forceUpdate() {
+		forceUpdate = true;
+	}
+
 	public List<Class<ObjectRelational>> createVOs()
 			throws ObjectRelationalBuilderException, ClassNotFoundException,
 			IOException, CompilerNotFoundException {
@@ -46,6 +52,8 @@ public class DatabaseLoader {
 		for (String table : tables) {
 			objectRelationalBuilder = new ObjectRelationalBuilder();
 			objectRelationalBuilder.setClassName(table);
+			if (forceUpdate)
+				objectRelationalBuilder.forceUpdate();
 			if (pack != null)
 				objectRelationalBuilder.setPackage(pack);
 			if (selecetedCase != null)
