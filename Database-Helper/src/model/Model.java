@@ -174,14 +174,8 @@ public class Model<T extends ObjectRelational> {
 	 * @throws SQLException
 	 */
 	public T insertReturningUpdatedObject(T t) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException, NoSuchFieldException, InstantiationException, SQLException {
-		Integer id = insertReturningGeneratedId(t);
-		T newT;
-		if(id != null){
-			newT = get(t.getColumnName(primaryKey), id.toString());
-		} else {
-			newT = get(t.getColumnName(primaryKey), t.getFieldValueAsString(t.getField(primaryKey)));
-		}
-		return newT;
+		insert(t);
+		return get(t);
 	}
 	
 	/**
