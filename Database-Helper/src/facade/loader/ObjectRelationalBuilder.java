@@ -29,7 +29,7 @@ public class ObjectRelationalBuilder {
 		if(!isValidAttributeOrClassName(className)){
 			throw new ObjectRelationalBuilderException("Invalid class name");
 		}
-		this.className = className;
+		this.className = firstLetterToUpperCase(className);
 	}
 
 	public void setAttribute(String type, String name) throws ObjectRelationalBuilderException {
