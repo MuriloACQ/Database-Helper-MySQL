@@ -12,7 +12,7 @@ import database.Metadata;
 import facade.ObjectRelational;
 import facade.loader.exceptions.CompilerNotFoundException;
 import facade.loader.exceptions.ObjectRelationalBuilderException;
-
+import static utils.Utils.firstLetterToUpperCase;
 import static utils.Utils.snakeToCamelCase;
 
 public class DatabaseLoader {
@@ -47,7 +47,7 @@ public class DatabaseLoader {
 	public List<Class<ObjectRelational>> createVOs()
 			throws ObjectRelationalBuilderException, ClassNotFoundException,
 			IOException, CompilerNotFoundException {
-		classes = new ArrayList<>();
+		classes = new ArrayList<Class<ObjectRelational>>();
 		tables = metadata.getTableNames();
 		for (String table : tables) {
 			objectRelationalBuilder = new ObjectRelationalBuilder();
@@ -65,6 +65,18 @@ public class DatabaseLoader {
 						getLastPartClass(types.get(i)), columns.get(i));
 			}
 			classes.add(objectRelationalBuilder.generate());
+		}
+		return classes;
+	}
+	
+	@SuppressWarnings({ "unchecked", "static-access" })
+	public List<Class<ObjectRelational>> getClassesList() throws ClassNotFoundException {
+		classes = new ArrayList<Class<ObjectRelational>>();
+		tables = metadata.getTableNames();
+		for (String table : tables) { 
+			String className = firstLetterToUpperCase(snakeToCamelCase(table));
+			if(pack != null) className = pack+"."+className;
+			classes.add((Class<ObjectRelational>) getClass().forName(className));
 		}
 		return classes;
 	}

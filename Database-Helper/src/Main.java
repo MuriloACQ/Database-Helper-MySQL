@@ -17,7 +17,7 @@ public class Main {
 			dbLoader.setCaseMod(ObjectRelational.SNAKELOWERCASE_TO_CAMELCASE);
 			dbLoader.forceUpdate();
 			try {
-				dbLoader.createVOs();
+				System.out.println(dbLoader.getClassesList());
 				Map<String, Model<ObjectRelational>> models = dbLoader.getModels();
 				
 			} catch (Exception e) {
