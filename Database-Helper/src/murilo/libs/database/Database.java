@@ -36,6 +36,7 @@ public class Database {
 	private boolean groupBy;
 	private boolean orderBy;
 	private boolean limit;
+	private boolean whereNot;
 
 	public Database(Connection conn) {
 		connection = conn;
@@ -192,7 +193,13 @@ public class Database {
 		where(data, "AND", "=");
 	}
 
-	public void where_OR(Map<String, String> data) {
+	public void whereNot(Map<String, String> data) {
+		whereNot = true;
+		where(data, "AND", "!=");
+		whereNot = false;
+	}
+
+	public void whereOr(Map<String, String> data) {
 		where(data, "OR", "=");
 	}
 
@@ -200,32 +207,38 @@ public class Database {
 		where(data, "AND", "LIKE");
 	}
 
-	public void like_OR(Map<String, String> data) {
+	public void likeOr(Map<String, String> data) {
 		where(data, "OR", "LIKE");
+	}
+
+	public void whereNot(String key, String value) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put(key, value);
+		whereNot(data);
 	}
 
 	public void where(String key, String value) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put(key, value);
-		where(data, "AND", "=");
+		where(data);
 	}
 
-	public void where_OR(String key, String value) {
+	public void whereOr(String key, String value) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put(key, value);
-		where(data, "OR", "=");
+		whereOr(data);
 	}
 
 	public void like(String key, String value) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put(key, value);
-		where(data, "AND", "LIKE");
+		like(data);
 	}
 
-	public void like_OR(String key, String value) {
+	public void likeOr(String key, String value) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put(key, value);
-		where(data, "OR", "LIKE");
+		likeOr(data);
 	}
 
 	public void whereInitiateGroup() {
@@ -243,7 +256,7 @@ public class Database {
 	public void groupBy(String data) {
 		List<String> list = new ArrayList<String>();
 		list.add(data);
-		group_by(list);
+		groupBy(list);
 	}
 
 	public void orderBy(List<String> data) {
@@ -253,7 +266,7 @@ public class Database {
 	public void orderBy(String data) {
 		List<String> list = new ArrayList<String>();
 		list.add(data);
-		orderBy(list, "ASC");
+		orderBy(list);
 	}
 
 	public void orderByDesc(List<String> data) {
@@ -263,7 +276,7 @@ public class Database {
 	public void orderByDesc(String data) {
 		List<String> list = new ArrayList<String>();
 		list.add(data);
-		orderBy(list, "DESC");
+		orderByDesc(list);
 	}
 
 	public void limit(int offset, int quantity) {
@@ -305,8 +318,12 @@ public class Database {
 			Map.Entry<String, String> mapEntry = iterator.next();
 			if (!where) {
 				if (mapEntry.getValue() == null) {
-					queryWhere += mapEntry.getKey().replaceAll("'", "\\\\'")
-							+ " " + operator + " NULL";
+					queryWhere += mapEntry.getKey().replaceAll("'", "\\\\'");
+					if (whereNot) {
+						queryWhere += " IS NOT NULL";
+					} else {
+						queryWhere += " IS NULL";
+					}
 				} else {
 					queryWhere += mapEntry.getKey().replaceAll("'", "\\\\'")
 							+ " " + operator + " '"
@@ -316,8 +333,12 @@ public class Database {
 				where = true;
 			} else if (mapEntry.getValue() == null) {
 				queryWhere += " " + type + " "
-						+ mapEntry.getKey().replaceAll("'", "\\\\'") + " "
-						+ operator + " NULL";
+						+ mapEntry.getKey().replaceAll("'", "\\\\'");
+				if (whereNot) {
+					queryWhere += " IS NOT NULL";
+				} else {
+					queryWhere += " IS NULL";
+				}
 			} else {
 				queryWhere += " " + type + " "
 						+ mapEntry.getKey().replaceAll("'", "\\\\'") + " "
@@ -393,6 +414,7 @@ public class Database {
 		groupBy = false;
 		orderBy = false;
 		limit = false;
+		whereNot = false;
 	}
 
 }

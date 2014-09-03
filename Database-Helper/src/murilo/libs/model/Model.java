@@ -239,7 +239,7 @@ public class Model<T extends ObjectRelational> {
 		Iterator<Map.Entry<String, String>> iterator = map.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Map.Entry<String, String> mapEntry = iterator.next();
-			if(mapEntry.getValue() != null && !mapEntry.getValue().equals("null")) {
+			if(mapEntry.getValue() != null) {
 				newMap.put(mapEntry.getKey(), mapEntry.getValue());
 			}  
 		}

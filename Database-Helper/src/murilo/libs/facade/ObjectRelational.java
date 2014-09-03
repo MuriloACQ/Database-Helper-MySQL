@@ -139,12 +139,18 @@ public class ObjectRelational {
 	 * @throws InvocationTargetException
 	 */
 	public String getFieldValueAsString(Field field) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
-		String result;
+		String result = null;
 		if (field.getModifiers() == 1) {
-			result = ""+field.get(this);
+			Object res = field.get(this);
+			if(res != null){
+				result = res.toString();
+			}
 		} else {
 			Method method = this.getClass().getMethod(convertToGetMethod(field));
-			result = ""+method.invoke(this);
+			Object res = method.invoke(this);
+			if(res != null){
+				result = res.toString();
+			}
 		}
 		return result;
 	}
