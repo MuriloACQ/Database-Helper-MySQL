@@ -90,7 +90,7 @@ public class ObjectRelationalBuilder {
 	private String assemble() {
 		String clazz = "";
 		if(pack != null) clazz += "package "+ pack+";\n\n";
-		clazz += "import facade.ObjectRelational;\n";
+		clazz += "import murilo.libs.facade.ObjectRelational;\n";
 		for (String importEntry : imports) {
 			clazz += "import "+ importEntry +";\n";
 		}
