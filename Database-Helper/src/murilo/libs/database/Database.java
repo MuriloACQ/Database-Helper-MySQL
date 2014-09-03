@@ -26,12 +26,14 @@ public class Database {
 	private String queryWhere;
 	private String querySelect;
 	private String querySet;
+	private String queryGroupBy;
 	private String queryOrderBy;
 	private String queryLimit;
 
 	private boolean where;
 	private boolean select;
 	private boolean set;
+	private boolean groupBy;
 	private boolean orderBy;
 	private boolean limit;
 
@@ -228,6 +230,16 @@ public class Database {
 		queryWhere += " ) ";
 	}
 
+	public void groupBy(List<String> data) {
+		group_by(data);
+	}
+
+	public void groupBy(String data) {
+		List<String> list = new ArrayList<String>();
+		list.add(data);
+		group_by(list);
+	}
+	
 	public void orderBy(List<String> data) {
 		orderBy(data, "ASC");
 	}
@@ -267,6 +279,9 @@ public class Database {
 		}
 		if (where) {
 			query += queryWhere + " ";
+		}
+		if (groupBy) {
+			query += queryGroupBy + " ";
 		}
 		if (orderBy) {
 			query += queryOrderBy + " ";
@@ -312,7 +327,6 @@ public class Database {
 	}
 
 	private void orderBy(List<String> data, String type) {
-		queryOrderBy = "ORDER BY ";
 		for (String dt : data) {
 			if (!orderBy) {
 				queryOrderBy += dt;
@@ -323,17 +337,30 @@ public class Database {
 		}
 		queryOrderBy += " " + type;
 	}
+	
+	private void group_by(List<String> data) {
+		for (String dt : data) {
+			if (!groupBy) {
+				queryGroupBy += dt;
+				groupBy = true;
+			} else {
+				queryGroupBy += ", " + dt;
+			}
+		}
+	}
 
 	private void clear() {
 		queryWhere = "WHERE ";
 		querySelect = "SELECT ";
 		querySet = "SET ";
+		queryGroupBy = "GROUP BY ";
 		queryOrderBy = "ORDER BY ";
 		queryLimit = "LIMIT ";
 
 		where = false;
 		select = false;
 		set = false;
+		groupBy = false;
 		orderBy = false;
 		limit = false;
 	}
