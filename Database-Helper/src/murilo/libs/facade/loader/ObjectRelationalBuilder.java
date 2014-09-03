@@ -60,8 +60,8 @@ public class ObjectRelationalBuilder {
 		this.pack = pack;
 	}
 
-	public void setBinayPath(String binayPath) {
-		this.binaryPath = binayPath;
+	public void setBinaryPath(String binaryPath) {
+		this.binaryPath = binaryPath;
 	}
 	
 	public void setPrefix(String prefix) {

@@ -22,6 +22,7 @@ public class DatabaseLoader {
 	private String pack;
 	private Integer selecetedCase;
 	private boolean forceUpdate;
+	private String binaryPath;
 
 	private List<String> tables;
 	private List<Class<ObjectRelational>> classes;
@@ -30,6 +31,10 @@ public class DatabaseLoader {
 		metadata = new Metadata(Connector.getConnection(),
 				Connector.getSchema());
 		forceUpdate = false;
+	}
+	
+	public void setBinaryPath(String binaryPath) {
+		this.binaryPath = binaryPath;
 	}
 
 	public void setPackage(String pack) {
@@ -58,6 +63,8 @@ public class DatabaseLoader {
 				objectRelationalBuilder.setPackage(pack);
 			if (selecetedCase != null)
 				objectRelationalBuilder.setCaseMod(selecetedCase);
+			if(binaryPath != null)
+				objectRelationalBuilder.setBinaryPath(binaryPath);
 			List<String> columns = metadata.getColumnNames(table);
 			List<String> types = metadata.getColumnClassNames(table);
 			for (int i = 0; i < columns.size(); i++) {
