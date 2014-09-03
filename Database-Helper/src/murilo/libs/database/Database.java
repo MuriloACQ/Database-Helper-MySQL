@@ -53,7 +53,7 @@ public class Database {
 			stm = (Statement) connection.createStatement();
 			id = stm.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
 			resultSet = (ResultSet) stm.getGeneratedKeys();
-			while(resultSet.next()){
+			while (resultSet.next()) {
 				id = resultSet.getInt(1);
 			}
 			stm.close();
@@ -110,13 +110,16 @@ public class Database {
 		}
 		clear();
 	}
-	
-	public ResultSet join(String tableA, String tableB, String columnA, String columnB, String type){
+
+	public ResultSet join(String tableA, String tableB, String columnA,
+			String columnB, String type) {
 		if (!select) {
 			querySelect += "* ";
 			select = true;
 		}
-		querySelect += " FROM " + tableA + " " + type + " JOIN " + tableB + " ON " + tableA + "." + columnA + " = " + tableB + "." + columnB + " ";
+		querySelect += " FROM " + tableA + " " + type + " JOIN " + tableB
+				+ " ON " + tableA + "." + columnA + " = " + tableB + "."
+				+ columnB + " ";
 		Statement stm = null;
 		ResultSet resultSet = null;
 		try {
@@ -140,31 +143,34 @@ public class Database {
 		}
 		return resultSet;
 	}
-	
-	public ResultSet innerJoin(String tableA, String tableB, String columnA, String columnB) {
+
+	public ResultSet innerJoin(String tableA, String tableB, String columnA,
+			String columnB) {
 		return join(tableA, tableB, columnA, columnB, "INNER");
 	}
-	
+
 	public ResultSet innerJoin(String tableA, String tableB, String column) {
 		return innerJoin(tableA, tableB, column, column);
 	}
-	
-	public ResultSet leftJoin(String tableA, String tableB, String columnA, String columnB) {
+
+	public ResultSet leftJoin(String tableA, String tableB, String columnA,
+			String columnB) {
 		return join(tableA, tableB, columnA, columnB, "LEFT");
 	}
-	
+
 	public ResultSet leftJoin(String tableA, String tableB, String column) {
 		return leftJoin(tableA, tableB, column, column);
 	}
-	
-	public ResultSet rightJoin(String tableA, String tableB, String columnA, String columnB) {
+
+	public ResultSet rightJoin(String tableA, String tableB, String columnA,
+			String columnB) {
 		return join(tableA, tableB, columnA, columnB, "RIGHT");
 	}
-	
+
 	public ResultSet rightJoin(String tableA, String tableB, String column) {
 		return rightJoin(tableA, tableB, column, column);
 	}
-	
+
 	public void select(String data) {
 		List<String> list = new ArrayList<String>();
 		list.add(data);
@@ -239,7 +245,7 @@ public class Database {
 		list.add(data);
 		group_by(list);
 	}
-	
+
 	public void orderBy(List<String> data) {
 		orderBy(data, "ASC");
 	}
@@ -297,13 +303,26 @@ public class Database {
 				.iterator();
 		while (iterator.hasNext()) {
 			Map.Entry<String, String> mapEntry = iterator.next();
-			if (!where && mapEntry.getValue() != null) { 
-				queryWhere += mapEntry.getKey().replaceAll("'", "\\\\'") + " " + operator + " '"
-						+ mapEntry.getValue().replaceAll("'", "\\\\'") + "'";
+			if (!where) {
+				if (mapEntry.getValue() == null) {
+					queryWhere += mapEntry.getKey().replaceAll("'", "\\\\'")
+							+ " " + operator + " NULL";
+				} else {
+					queryWhere += mapEntry.getKey().replaceAll("'", "\\\\'")
+							+ " " + operator + " '"
+							+ mapEntry.getValue().replaceAll("'", "\\\\'")
+							+ "'";
+				}
 				where = true;
-			} else if(mapEntry.getValue() != null) {
-				queryWhere += " " + type + " " + mapEntry.getKey().replaceAll("'", "\\\\'") + " "
-						+ operator + " '" + mapEntry.getValue().replaceAll("'", "\\\\'") + "'";
+			} else if (mapEntry.getValue() == null) {
+				queryWhere += " " + type + " "
+						+ mapEntry.getKey().replaceAll("'", "\\\\'") + " "
+						+ operator + " NULL";
+			} else {
+				queryWhere += " " + type + " "
+						+ mapEntry.getKey().replaceAll("'", "\\\\'") + " "
+						+ operator + " '"
+						+ mapEntry.getValue().replaceAll("'", "\\\\'") + "'";
 			}
 
 		}
@@ -314,13 +333,24 @@ public class Database {
 				.iterator();
 		while (iterator.hasNext()) {
 			Map.Entry<String, String> mapEntry = iterator.next();
-			if (!set && mapEntry.getValue() != null) {
-				querySet += mapEntry.getKey().replaceAll("'", "\\\\'") + " = '" + mapEntry.getValue().replaceAll("'", "\\\\'")
-						+ "'";
+			if (!set) {
+				if (mapEntry.getValue() == null) {
+					querySet += mapEntry.getKey().replaceAll("'", "\\\\'")
+							+ " = NULL";
+				} else {
+					querySet += mapEntry.getKey().replaceAll("'", "\\\\'")
+							+ " = '"
+							+ mapEntry.getValue().replaceAll("'", "\\\\'")
+							+ "'";
+				}
 				set = true;
-			} else if(mapEntry.getValue() != null) {
-				querySet += ", " + mapEntry.getKey().replaceAll("'", "\\\\'") + " = '"
-						+ mapEntry.getValue().replaceAll("'", "\\\\'") + "'";
+			} else if (mapEntry.getValue() == null) {
+				querySet += ", " + mapEntry.getKey().replaceAll("'", "\\\\'")
+						+ " = NULL";
+			} else {
+				querySet += ", " + mapEntry.getKey().replaceAll("'", "\\\\'")
+						+ " = '" + mapEntry.getValue().replaceAll("'", "\\\\'")
+						+ "'";
 			}
 
 		}
@@ -337,7 +367,7 @@ public class Database {
 		}
 		queryOrderBy += " " + type;
 	}
-	
+
 	private void group_by(List<String> data) {
 		for (String dt : data) {
 			if (!groupBy) {
