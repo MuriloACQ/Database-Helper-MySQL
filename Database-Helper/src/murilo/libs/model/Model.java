@@ -196,6 +196,23 @@ public class Model<T extends ObjectRelational> {
 	}
 	
 	/**
+	 * Update a T object in database table keeping null values
+	 * @param t
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws InvocationTargetException
+	 */
+	public void updateKeepingNullValues (T t) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
+		Map<String, String> export = t.export();
+		String primaryKey = t.getColumnName(this.primaryKey);
+		db.where(primaryKey, export.get(primaryKey));
+		export.remove(primaryKey);
+		db.update(export, table);
+	}
+	
+	/**
 	 * Delete a T object from database table
 	 * @param t
 	 * @throws IllegalArgumentException
@@ -211,7 +228,7 @@ public class Model<T extends ObjectRelational> {
 		db.delete(table);
 		t = null;
 	}
-	
+		
 	/**
 	 * Set auto generated id (Integer) in a recent inserted object
 	 * @param id
