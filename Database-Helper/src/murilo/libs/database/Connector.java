@@ -32,7 +32,7 @@ public class Connector {
 	public static void setSchema(String schemaname) {
 		schema = schemaname;
 	}
-	
+
 	public static String getSchema() {
 		return schema;
 	}
@@ -46,7 +46,27 @@ public class Connector {
 	}
 
 	public static boolean isConnected() {
+		if (connection != null) {
+			connected = connected && !connection.isClosed();
+		}
+		if (connected)
+			status = "connected";
+		else {
+			status = "not connected";
+		}
 		return connected;
+	}
+	
+	public static Connection reconnect() {
+		if(connection != null){
+			try {
+				connection.close();
+				connected = false;
+			} catch (SQLException e) {
+				status = e.getMessage();
+			}
+		}
+		return getConnection();
 	}
 
 	public static Connection getConnection() {
