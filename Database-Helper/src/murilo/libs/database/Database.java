@@ -173,9 +173,7 @@ public class Database {
 	}
 
 	public void select(String data) {
-		List<String> list = new ArrayList<String>();
-		list.add(data);
-		select(list);
+		select(setToList(data));
 	}
 
 	public void select(List<String> data) {
@@ -199,6 +197,12 @@ public class Database {
 		whereNot = false;
 	}
 
+	public void whereNotOr(Map<String, String> data) {
+		whereNot = true;
+		where(data, "OR", "!=");
+		whereNot = false;
+	}
+	
 	public void whereOr(Map<String, String> data) {
 		where(data, "OR", "=");
 	}
@@ -206,39 +210,49 @@ public class Database {
 	public void like(Map<String, String> data) {
 		where(data, "AND", "LIKE");
 	}
+	
+	public void likeNot(Map<String, String> data) {
+		where(data, "AND", "NOT LIKE");
+	}
 
 	public void likeOr(Map<String, String> data) {
 		where(data, "OR", "LIKE");
 	}
+	
+	public void likeNotOr(Map<String, String> data) {
+		where(data, "OR", "NOT LIKE");
+	}
 
 	public void whereNot(String key, String value) {
-		Map<String, String> data = new HashMap<String, String>();
-		data.put(key, value);
-		whereNot(data);
+		whereNot(setToMap(key, value));
+	}
+	
+	public void whereNotOr(String key, String value) {
+		whereNotOr(setToMap(key, value));
 	}
 
 	public void where(String key, String value) {
-		Map<String, String> data = new HashMap<String, String>();
-		data.put(key, value);
-		where(data);
+		where(setToMap(key, value));
 	}
 
 	public void whereOr(String key, String value) {
-		Map<String, String> data = new HashMap<String, String>();
-		data.put(key, value);
-		whereOr(data);
+		whereOr(setToMap(key, value));
 	}
 
 	public void like(String key, String value) {
-		Map<String, String> data = new HashMap<String, String>();
-		data.put(key, value);
-		like(data);
+		like(setToMap(key, value));
+	}
+	
+	public void likeNot(String key, String value) {
+		likeNot(setToMap(key, value));
 	}
 
 	public void likeOr(String key, String value) {
-		Map<String, String> data = new HashMap<String, String>();
-		data.put(key, value);
-		likeOr(data);
+		likeOr(setToMap(key, value));
+	}
+	
+	public void likeNotOr(String key, String value) {
+		likeNotOr(setToMap(key, value));
 	}
 
 	public void whereInitiateGroup() {
@@ -254,9 +268,7 @@ public class Database {
 	}
 
 	public void groupBy(String data) {
-		List<String> list = new ArrayList<String>();
-		list.add(data);
-		groupBy(list);
+		groupBy(setToList(data));
 	}
 
 	public void orderBy(List<String> data) {
@@ -264,9 +276,7 @@ public class Database {
 	}
 
 	public void orderBy(String data) {
-		List<String> list = new ArrayList<String>();
-		list.add(data);
-		orderBy(list);
+		orderBy(setToList(data));
 	}
 
 	public void orderByDesc(List<String> data) {
@@ -274,9 +284,7 @@ public class Database {
 	}
 
 	public void orderByDesc(String data) {
-		List<String> list = new ArrayList<String>();
-		list.add(data);
-		orderByDesc(list);
+		orderByDesc(setToList(data));
 	}
 
 	public void limit(int offset, int quantity) {
@@ -398,6 +406,18 @@ public class Database {
 				queryGroupBy += ", " + dt;
 			}
 		}
+	}
+	
+	private Map<String, String> setToMap(String key, String value) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put(key, value);
+		return data;
+	}
+	
+	private List<String> setToList(String data) {
+		List<String> list = new ArrayList<String>();
+		list.add(data);
+		return list;
 	}
 
 	private void clear() {
