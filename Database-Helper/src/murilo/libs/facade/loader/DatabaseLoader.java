@@ -60,7 +60,7 @@ public class DatabaseLoader {
 		return classes;
 	}
 
-	@SuppressWarnings({ "unchecked", "static-access" })
+	@SuppressWarnings("unchecked")
 	public List<Class<ObjectRelational>> getClassesList()
 			throws ClassNotFoundException {
 		classes = new ArrayList<Class<ObjectRelational>>();
@@ -69,7 +69,7 @@ public class DatabaseLoader {
 			String className = firstLetterToUpperCase(snakeToCamelCase(table));
 			if (pack != null)
 				className = pack + "." + className;
-			classes.add((Class<ObjectRelational>) getClass().forName(className));
+			classes.add((Class<ObjectRelational>) Class.forName(className));
 		}
 		return classes;
 	}
