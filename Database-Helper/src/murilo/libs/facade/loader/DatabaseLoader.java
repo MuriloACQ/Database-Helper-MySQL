@@ -32,7 +32,7 @@ public class DatabaseLoader {
 				Connector.getSchema());
 		forceUpdate = false;
 	}
-	
+
 	public void setBinaryPath(String binaryPath) {
 		this.binaryPath = binaryPath;
 	}
@@ -55,35 +55,42 @@ public class DatabaseLoader {
 		classes = new ArrayList<Class<ObjectRelational>>();
 		tables = metadata.getTableNames();
 		for (String table : tables) {
-			objectRelationalBuilder = new ObjectRelationalBuilder();
-			objectRelationalBuilder.setClassName(table);
-			if (forceUpdate)
-				objectRelationalBuilder.forceUpdate();
-			if (pack != null)
-				objectRelationalBuilder.setPackage(pack);
-			if (selecetedCase != null)
-				objectRelationalBuilder.setCaseMod(selecetedCase);
-			if(binaryPath != null)
-				objectRelationalBuilder.setBinaryPath(binaryPath);
-			List<String> columns = metadata.getColumnNames(table);
-			List<String> types = metadata.getColumnClassNames(table);
-			for (int i = 0; i < columns.size(); i++) {
-				objectRelationalBuilder.setAttribute(
-						getLastPartClass(types.get(i)), columns.get(i));
-			}
-			classes.add(objectRelationalBuilder.generate());
+			classes.add(buildObjectRelational(table));
 		}
 		return classes;
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "static-access" })
-	public List<Class<ObjectRelational>> getClassesList() throws ClassNotFoundException {
+	public List<Class<ObjectRelational>> getClassesList()
+			throws ClassNotFoundException {
+		classes = new ArrayList<Class<ObjectRelational>>();
+		tables = metadata.getTableNames();
+		for (String table : tables) {
+			String className = firstLetterToUpperCase(snakeToCamelCase(table));
+			if (pack != null)
+				className = pack + "." + className;
+			classes.add((Class<ObjectRelational>) getClass().forName(className));
+		}
+		return classes;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Class<ObjectRelational>> createVOsIfNotExistAndGetClasses()
+			throws ObjectRelationalBuilderException, ClassNotFoundException,
+			IOException, CompilerNotFoundException {
 		classes = new ArrayList<Class<ObjectRelational>>();
 		tables = metadata.getTableNames();
 		for (String table : tables) { 
 			String className = firstLetterToUpperCase(snakeToCamelCase(table));
-			if(pack != null) className = pack+"."+className;
-			classes.add((Class<ObjectRelational>) getClass().forName(className));
+			if (pack != null)
+				className = pack + "." + className;
+			Class<ObjectRelational> clazz;
+			try {
+				clazz = (Class<ObjectRelational>) Class.forName(className);
+			} catch (ClassNotFoundException e) {
+				clazz = buildObjectRelational(table);
+			}
+			classes.add(clazz);
 		}
 		return classes;
 	}
@@ -101,6 +108,26 @@ public class DatabaseLoader {
 			}
 		}
 		return models;
+	}
+	
+	private Class<ObjectRelational> buildObjectRelational(String table) throws ObjectRelationalBuilderException, ClassNotFoundException, IOException, CompilerNotFoundException{
+		objectRelationalBuilder = new ObjectRelationalBuilder();
+		objectRelationalBuilder.setClassName(table);
+		if (forceUpdate)
+			objectRelationalBuilder.forceUpdate();
+		if (pack != null)
+			objectRelationalBuilder.setPackage(pack);
+		if (selecetedCase != null)
+			objectRelationalBuilder.setCaseMod(selecetedCase);
+		if (binaryPath != null)
+			objectRelationalBuilder.setBinaryPath(binaryPath);
+		List<String> columns = metadata.getColumnNames(table);
+		List<String> types = metadata.getColumnClassNames(table);
+		for (int i = 0; i < columns.size(); i++) {
+			objectRelationalBuilder.setAttribute(
+					getLastPartClass(types.get(i)), columns.get(i));
+		}
+		return objectRelationalBuilder.generate();
 	}
 
 	private String getLastPartClass(String clazz) {
