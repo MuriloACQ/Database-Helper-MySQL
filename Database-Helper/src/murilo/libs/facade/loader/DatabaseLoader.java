@@ -66,10 +66,7 @@ public class DatabaseLoader {
 		classes = new ArrayList<Class<ObjectRelational>>();
 		tables = metadata.getTableNames();
 		for (String table : tables) {
-			String className = firstLetterToUpperCase(snakeToCamelCase(table));
-			if (pack != null)
-				className = pack + "." + className;
-			classes.add((Class<ObjectRelational>) Class.forName(className));
+			classes.add((Class<ObjectRelational>) Class.forName(getClassName(table)));
 		}
 		return classes;
 	}
@@ -81,16 +78,11 @@ public class DatabaseLoader {
 		classes = new ArrayList<Class<ObjectRelational>>();
 		tables = metadata.getTableNames();
 		for (String table : tables) { 
-			String className = firstLetterToUpperCase(snakeToCamelCase(table));
-			if (pack != null)
-				className = pack + "." + className;
-			Class<ObjectRelational> clazz;
 			try {
-				clazz = (Class<ObjectRelational>) Class.forName(className);
+				classes.add((Class<ObjectRelational>) Class.forName(getClassName(table)));
 			} catch (ClassNotFoundException e) {
-				clazz = buildObjectRelational(table);
+				classes.add(buildObjectRelational(table));
 			}
-			classes.add(clazz);
 		}
 		return classes;
 	}
@@ -128,6 +120,13 @@ public class DatabaseLoader {
 					getLastPartClass(types.get(i)), columns.get(i));
 		}
 		return objectRelationalBuilder.generate();
+	}
+	
+	private String getClassName(String table) {
+		String className = firstLetterToUpperCase(snakeToCamelCase(table));
+		if (pack != null)
+			className = pack + "." + className;
+		return className;
 	}
 
 	private String getLastPartClass(String clazz) {
