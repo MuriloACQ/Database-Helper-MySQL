@@ -6,9 +6,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import murilo.libs.database.Database;
 import murilo.libs.facade.ObjectRelational;
 
 public class ModelLinker {
@@ -24,7 +26,7 @@ public class ModelLinker {
 	public Model<ObjectRelational> getModel(String clazz) {
 		return models.get(clazz);
 	}
-	
+
 	public Map<String, Model<ObjectRelational>> getAllModels() {
 		return models;
 	}
@@ -46,6 +48,33 @@ public class ModelLinker {
 			InstantiationException, SQLException {
 		String clazz = getLastPartClass(obj.getClass().getName());
 		return get(clazz, obj, foreignKeyAttributeName);
+	}
+
+	public List<ObjectRelational> getExported(ObjectRelational obj, String clazz)
+			throws IllegalArgumentException, IllegalAccessException,
+			NoSuchMethodException, SecurityException,
+			InvocationTargetException, NoSuchFieldException,
+			InstantiationException, SQLException {
+		List<ObjectRelational> list = null;
+		String klass = getLastPartClass(obj.getClass().getName());
+		Model<ObjectRelational> model = models.get(klass);
+		String pk = model.getPrimaryKeyAttributeName();
+		Map<String, String> link = links.get(clazz);
+		String foreignAttribute = null;
+		Iterator<Map.Entry<String, String>> iterator = link.entrySet()
+				.iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<String, String> mapEntry = iterator.next();
+			if (mapEntry.getValue().equals(klass))
+				foreignAttribute = mapEntry.getKey();
+		}
+		if (foreignAttribute != null) {
+			model = models.get(clazz);
+			model.getDatabase().where(obj.getColumnName(foreignAttribute),
+					obj.getFieldValueAsString(obj.getField(pk)));
+			list = model.list();
+		}
+		return list;
 	}
 
 	public List<ObjectRelational> get(ObjectRelational obj)

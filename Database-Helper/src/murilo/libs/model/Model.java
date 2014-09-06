@@ -45,6 +45,14 @@ public class Model<T extends ObjectRelational> {
 	}
 	
 	/**
+	 * Get primary key
+	 * @return
+	 */
+	public String getPrimaryKeyAttributeName() {
+		return primaryKey;
+	}
+	
+	/**
 	 * Get a new instance of T class
 	 * @return new T object
 	 * @throws InstantiationException
