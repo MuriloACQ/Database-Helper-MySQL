@@ -2,7 +2,9 @@ package murilo.libs.database;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.DatabaseMetaData;
@@ -94,5 +96,19 @@ public class Metadata {
 			e.printStackTrace();
 		}
 		return pk;
+	}
+	
+	public Map<String, String> getForeignKeys(String table){
+		Map<String, String> fks = new HashMap<String, String>();
+		try {
+			ResultSet resultSet = (ResultSet) databaseMetaData.getExportedKeys(null,
+					schema, table);
+			while (resultSet.next()) {
+				fks.put(resultSet.getString("FKTABLE_NAME"), resultSet.getString("FKCOLUMN_NAME"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return fks;
 	}
 }

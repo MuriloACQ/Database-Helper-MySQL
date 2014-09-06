@@ -3,6 +3,7 @@ package murilo.libs.facade.loader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -12,8 +13,10 @@ import murilo.libs.facade.ObjectRelational;
 import murilo.libs.facade.loader.exceptions.CompilerNotFoundException;
 import murilo.libs.facade.loader.exceptions.ObjectRelationalBuilderException;
 import murilo.libs.model.Model;
+import murilo.libs.model.ModelLinker;
 import static murilo.libs.utils.Utils.firstLetterToUpperCase;
 import static murilo.libs.utils.Utils.snakeToCamelCase;
+import static murilo.libs.utils.Utils.getLastPartClass;
 
 public class DatabaseLoader {
 
@@ -26,6 +29,7 @@ public class DatabaseLoader {
 
 	private List<String> tables;
 	private List<Class<ObjectRelational>> classes;
+	private Map<String, Model<ObjectRelational>> models;
 
 	public DatabaseLoader() {
 		metadata = new Metadata(Connector.getConnection(),
@@ -66,7 +70,8 @@ public class DatabaseLoader {
 		classes = new ArrayList<Class<ObjectRelational>>();
 		tables = metadata.getTableNames();
 		for (String table : tables) {
-			classes.add((Class<ObjectRelational>) Class.forName(getClassName(table)));
+			classes.add((Class<ObjectRelational>) Class
+					.forName(getClassName(table)));
 		}
 		return classes;
 	}
@@ -77,9 +82,10 @@ public class DatabaseLoader {
 			IOException, CompilerNotFoundException {
 		classes = new ArrayList<Class<ObjectRelational>>();
 		tables = metadata.getTableNames();
-		for (String table : tables) { 
+		for (String table : tables) {
 			try {
-				classes.add((Class<ObjectRelational>) Class.forName(getClassName(table)));
+				classes.add((Class<ObjectRelational>) Class
+						.forName(getClassName(table)));
 			} catch (ClassNotFoundException e) {
 				classes.add(buildObjectRelational(table));
 			}
@@ -87,8 +93,9 @@ public class DatabaseLoader {
 		return classes;
 	}
 
-	public Map<String, Model<ObjectRelational>> getModels() {
-		Map<String, Model<ObjectRelational>> models = null;
+	public Map<String, Model<ObjectRelational>> getModels() throws ClassNotFoundException, ObjectRelationalBuilderException, IOException, CompilerNotFoundException {
+		if (classes == null)
+			createVOsIfNotExistAndGetClasses();
 		if (classes != null) {
 			models = new HashMap<String, Model<ObjectRelational>>();
 			for (int i = 0; i < classes.size(); i++) {
@@ -101,8 +108,32 @@ public class DatabaseLoader {
 		}
 		return models;
 	}
-	
-	private Class<ObjectRelational> buildObjectRelational(String table) throws ObjectRelationalBuilderException, ClassNotFoundException, IOException, CompilerNotFoundException{
+
+	public ModelLinker getLinker() throws ClassNotFoundException, ObjectRelationalBuilderException, IOException, CompilerNotFoundException {
+		ModelLinker linker = null;
+		if (models == null)
+			getModels();
+		if (models != null) {
+			linker = new ModelLinker(models);
+			for (String table : tables) {
+				Map<String, String> foreignKeys = metadata
+						.getForeignKeys(table);
+				Iterator<Map.Entry<String, String>> iterator = foreignKeys
+						.entrySet().iterator();
+				while (iterator.hasNext()) {
+					Map.Entry<String, String> mapEntry = iterator.next();
+					linker.setLink(getClassName(mapEntry.getKey()),
+							snakeToCamelCase(mapEntry.getValue()),
+							getClassName(table));
+				}
+			}
+		}
+		return linker;
+	}
+
+	private Class<ObjectRelational> buildObjectRelational(String table)
+			throws ObjectRelationalBuilderException, ClassNotFoundException,
+			IOException, CompilerNotFoundException {
 		objectRelationalBuilder = new ObjectRelationalBuilder();
 		objectRelationalBuilder.setClassName(table);
 		if (forceUpdate)
@@ -121,20 +152,12 @@ public class DatabaseLoader {
 		}
 		return objectRelationalBuilder.generate();
 	}
-	
+
 	private String getClassName(String table) {
 		String className = firstLetterToUpperCase(snakeToCamelCase(table));
 		if (pack != null)
 			className = pack + "." + className;
 		return className;
-	}
-
-	private String getLastPartClass(String clazz) {
-		String[] parts = clazz.split("\\.");
-		if (parts.length > 0) {
-			clazz = parts[parts.length - 1];
-		}
-		return clazz;
 	}
 
 }

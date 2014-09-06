@@ -129,7 +129,27 @@ public class ObjectRelational {
 	}
 	
 	/**
-	 * Get a field value. Null value will return a string "null"
+	 * Get a field value
+	 * @param field
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 */
+	public Object getFieldValue(Field field) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		Object result = null;
+		if (field.getModifiers() == 1) {
+			result = field.get(this);
+		} else {
+			result = this.getClass().getMethod(convertToGetMethod(field)).invoke(this);
+		}
+		return result;
+	}
+	
+	/**
+	 * Get a field value as a string
 	 * @param field
 	 * @return String
 	 * @throws IllegalArgumentException
@@ -216,7 +236,7 @@ public class ObjectRelational {
 			string = string.concat(field.getName());
 			string = string.concat("=");
 			try {
-				string = string.concat(getFieldValueAsString(field));
+				string += getFieldValueAsString(field);
 			} catch (IllegalArgumentException | IllegalAccessException
 					| NoSuchMethodException | SecurityException
 					| InvocationTargetException e) {

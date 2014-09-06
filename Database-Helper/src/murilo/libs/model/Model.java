@@ -55,6 +55,25 @@ public class Model<T extends ObjectRelational> {
 	}
 	
 	/**
+	 * Return T object by primary key value
+	 * @param value
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws InvocationTargetException
+	 * @throws SQLException
+	 * @throws NoSuchFieldException
+	 */
+	public T get(Object value) throws IllegalArgumentException, IllegalAccessException, InstantiationException, NoSuchMethodException, SecurityException, InvocationTargetException, SQLException, NoSuchFieldException {
+		T t = newInstance();
+		t.setFieldValue(t.getField(primaryKey), value);
+		return get(t);
+	}
+	
+	/**
 	 * Get a updated instance of T
 	 * @param t
 	 * @return
