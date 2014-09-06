@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import murilo.libs.database.Database;
 import murilo.libs.facade.ObjectRelational;
 
 public class ModelLinker {
@@ -65,8 +64,10 @@ public class ModelLinker {
 				.iterator();
 		while (iterator.hasNext()) {
 			Map.Entry<String, String> mapEntry = iterator.next();
-			if (mapEntry.getValue().equals(klass))
+			if (mapEntry.getValue().equals(klass)) {
 				foreignAttribute = mapEntry.getKey();
+				break;
+			}
 		}
 		if (foreignAttribute != null) {
 			model = models.get(clazz);

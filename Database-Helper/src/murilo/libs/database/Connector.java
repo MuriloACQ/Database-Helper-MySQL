@@ -56,9 +56,9 @@ public class Connector {
 		}
 		return connected;
 	}
-	
+
 	public static Connection reconnect() {
-		if(connection != null){
+		if (connection != null) {
 			try {
 				connection.close();
 				connected = false;

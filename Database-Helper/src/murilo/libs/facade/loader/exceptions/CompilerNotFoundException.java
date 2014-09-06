@@ -1,7 +1,7 @@
 package murilo.libs.facade.loader.exceptions;
 
 public class CompilerNotFoundException extends Exception {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	public CompilerNotFoundException() {

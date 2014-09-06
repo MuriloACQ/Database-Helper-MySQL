@@ -31,19 +31,21 @@ public class ObjectRelationalBuilder {
 		forceUpdate = false;
 		binaryPath = "bin";
 	}
-	
+
 	public void forceUpdate() {
 		forceUpdate = true;
 	}
 
-	public void setClassName(String className) throws ObjectRelationalBuilderException {
-		if(!isValidAttributeOrClassName(className)){
+	public void setClassName(String className)
+			throws ObjectRelationalBuilderException {
+		if (!isValidAttributeOrClassName(className)) {
 			throw new ObjectRelationalBuilderException("Invalid class name");
 		}
 		this.className = firstLetterToUpperCase(snakeToCamelCase(className));
 	}
 
-	public void setAttribute(String type, String name) throws ObjectRelationalBuilderException {
+	public void setAttribute(String type, String name)
+			throws ObjectRelationalBuilderException {
 		if (!isValidAttributeOrClassName(type)) {
 			throw new ObjectRelationalBuilderException("Invalid type");
 		}
@@ -55,7 +57,7 @@ public class ObjectRelationalBuilder {
 		types.add(type);
 		names.add(snakeToCamelCase(name));
 	}
-	
+
 	public void setPackage(String pack) {
 		this.pack = pack;
 	}
@@ -63,51 +65,62 @@ public class ObjectRelationalBuilder {
 	public void setBinaryPath(String binaryPath) {
 		this.binaryPath = binaryPath;
 	}
-	
+
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
-	
+
 	public void setCaseMod(int mod) {
 		selectedCase = mod;
 	}
 
 	@SuppressWarnings("unchecked")
-	public Class<ObjectRelational> generate() throws IOException, CompilerNotFoundException, ObjectRelationalBuilderException, ClassNotFoundException {
-		if(className == null){
-			throw new ObjectRelationalBuilderException("Cannot generate a subclass of ObjectRelational without class name");
+	public Class<ObjectRelational> generate() throws IOException,
+			CompilerNotFoundException, ObjectRelationalBuilderException,
+			ClassNotFoundException {
+		if (className == null) {
+			throw new ObjectRelationalBuilderException(
+					"Cannot generate a subclass of ObjectRelational without class name");
 		}
-		if (types.size() == 0){
-			throw new ObjectRelationalBuilderException("Cannot generate a subclass of ObjectRelational without attributes");
+		if (types.size() == 0) {
+			throw new ObjectRelationalBuilderException(
+					"Cannot generate a subclass of ObjectRelational without attributes");
 		}
 		ClassLoader classLoader = new ClassLoader();
-		if(forceUpdate) classLoader.forceUpdate();
+		if (forceUpdate)
+			classLoader.forceUpdate();
 		classLoader.setBinaryPath(binaryPath);
 		classLoader.setPackage(pack);
-		return (Class<ObjectRelational>) classLoader.newClass(className, assemble());
+		return (Class<ObjectRelational>) classLoader.newClass(className,
+				assemble());
 	}
 
 	private String assemble() {
 		String clazz = "";
-		if(pack != null) clazz += "package "+ pack+";\n\n";
+		if (pack != null)
+			clazz += "package " + pack + ";\n\n";
 		clazz += "import murilo.libs.facade.ObjectRelational;\n";
 		for (String importEntry : imports) {
-			clazz += "import "+ importEntry +";\n";
+			clazz += "import " + importEntry + ";\n";
 		}
 		clazz += "\npublic class ";
 		clazz += className + " extends ObjectRelational { \n\n";
-		clazz += "\tpublic "+className+"() {\n";
+		clazz += "\tpublic " + className + "() {\n";
 		clazz += "\t\tsuper();\n";
-		if(prefix != null) clazz += "\t\tsetPrefix("+'"'+prefix+'"'+");\n";
-		if(selectedCase != null) clazz += "\t\tsetCaseMod("+selectedCase+");\n";
+		if (prefix != null)
+			clazz += "\t\tsetPrefix(" + '"' + prefix + '"' + ");\n";
+		if (selectedCase != null)
+			clazz += "\t\tsetCaseMod(" + selectedCase + ");\n";
 		clazz += "\t}\n\n";
 		for (int i = 0; i < types.size(); i++) {
-			clazz += "\tprivate " + types.get(i) + " " +names.get(i) + ";\n\n";
-			clazz += "\tpublic " + types.get(i) + " get" +firstLetterToUpperCase(names.get(i)) + "() {\n";
-			clazz += "\t\treturn "+names.get(i) + ";\n";
+			clazz += "\tprivate " + types.get(i) + " " + names.get(i) + ";\n\n";
+			clazz += "\tpublic " + types.get(i) + " get"
+					+ firstLetterToUpperCase(names.get(i)) + "() {\n";
+			clazz += "\t\treturn " + names.get(i) + ";\n";
 			clazz += "\t}\n\n";
-			clazz += "\tpublic void set" +firstLetterToUpperCase(names.get(i)) + "("+types.get(i)+" "+names.get(i)+") {\n";
-			clazz += "\t\tthis."+names.get(i) + " = " + names.get(i)+";\n";
+			clazz += "\tpublic void set" + firstLetterToUpperCase(names.get(i))
+					+ "(" + types.get(i) + " " + names.get(i) + ") {\n";
+			clazz += "\t\tthis." + names.get(i) + " = " + names.get(i) + ";\n";
 			clazz += "\t}\n\n";
 		}
 		clazz += "}";
@@ -138,7 +151,7 @@ public class ObjectRelationalBuilder {
 		}
 		return type;
 	}
-	
+
 	private void importType(String type) {
 		if (type.equals("Timestamp")) {
 			imports.add("java.sql.Timestamp");

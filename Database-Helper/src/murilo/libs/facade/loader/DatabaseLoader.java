@@ -93,7 +93,9 @@ public class DatabaseLoader {
 		return classes;
 	}
 
-	public Map<String, Model<ObjectRelational>> getModels() throws ClassNotFoundException, ObjectRelationalBuilderException, IOException, CompilerNotFoundException {
+	public Map<String, Model<ObjectRelational>> getModels()
+			throws ClassNotFoundException, ObjectRelationalBuilderException,
+			IOException, CompilerNotFoundException {
 		if (classes == null)
 			createVOsIfNotExistAndGetClasses();
 		if (classes != null) {
@@ -109,7 +111,9 @@ public class DatabaseLoader {
 		return models;
 	}
 
-	public ModelLinker getLinker() throws ClassNotFoundException, ObjectRelationalBuilderException, IOException, CompilerNotFoundException {
+	public ModelLinker getLinker() throws ClassNotFoundException,
+			ObjectRelationalBuilderException, IOException,
+			CompilerNotFoundException {
 		ModelLinker linker = null;
 		if (models == null)
 			getModels();

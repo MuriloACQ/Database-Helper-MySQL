@@ -20,7 +20,7 @@ public class Utils {
 	public static String camelToSnakeCase(String camelcase) {
 		return camelcase.replaceAll("([A-Z][a-z])", "_$1");
 	}
-	
+
 	public static String getLastPartClass(String clazz) {
 		String[] parts = clazz.split("\\.");
 		if (parts.length > 0) {

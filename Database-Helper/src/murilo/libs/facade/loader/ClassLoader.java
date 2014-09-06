@@ -18,7 +18,7 @@ public class ClassLoader {
 	private String binaryPath;
 	private String pack;
 	private boolean forceUpdate;
-	
+
 	public ClassLoader() {
 		forceUpdate = false;
 	}
@@ -30,13 +30,14 @@ public class ClassLoader {
 	public void setPackage(String pack) {
 		this.pack = pack;
 	}
-	
-	public void forceUpdate(){
+
+	public void forceUpdate() {
 		forceUpdate = true;
 	}
 
 	public Class<?> newClass(String className, String declaration)
-			throws IOException, CompilerNotFoundException, ClassNotFoundException {
+			throws IOException, CompilerNotFoundException,
+			ClassNotFoundException {
 		String filePath = "src";
 		String classPath = "";
 		if (pack != null) {
@@ -54,7 +55,8 @@ public class ClassLoader {
 			fos.close();
 			JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 			if (compiler == null) {
-				throw new CompilerNotFoundException("Maybe you should use jdk to running application instead of jre");
+				throw new CompilerNotFoundException(
+						"Maybe you should use jdk to running application instead of jre");
 			}
 			StandardJavaFileManager standardJavaFileManager = compiler
 					.getStandardFileManager(null, null, null);
@@ -66,7 +68,7 @@ public class ClassLoader {
 							.asList(file)));
 			compilationTask.call();
 		}
-		return Class.forName(classPath+className);
+		return Class.forName(classPath + className);
 	}
-	
+
 }

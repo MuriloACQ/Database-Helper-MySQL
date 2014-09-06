@@ -83,12 +83,12 @@ public class Metadata {
 		}
 		return classes;
 	}
-	
-	public String getPrimaryKey(String table){
+
+	public String getPrimaryKey(String table) {
 		String pk = null;
 		try {
-			ResultSet resultSet = (ResultSet) databaseMetaData.getPrimaryKeys(null,
-					schema, table);
+			ResultSet resultSet = (ResultSet) databaseMetaData.getPrimaryKeys(
+					null, schema, table);
 			if (resultSet.next()) {
 				pk = resultSet.getString("COLUMN_NAME");
 			}
@@ -97,14 +97,15 @@ public class Metadata {
 		}
 		return pk;
 	}
-	
-	public Map<String, String> getForeignKeys(String table){
+
+	public Map<String, String> getForeignKeys(String table) {
 		Map<String, String> fks = new HashMap<String, String>();
 		try {
-			ResultSet resultSet = (ResultSet) databaseMetaData.getExportedKeys(null,
-					schema, table);
+			ResultSet resultSet = (ResultSet) databaseMetaData.getExportedKeys(
+					null, schema, table);
 			while (resultSet.next()) {
-				fks.put(resultSet.getString("FKTABLE_NAME"), resultSet.getString("FKCOLUMN_NAME"));
+				fks.put(resultSet.getString("FKTABLE_NAME"),
+						resultSet.getString("FKCOLUMN_NAME"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
