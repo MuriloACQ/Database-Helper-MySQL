@@ -288,7 +288,7 @@ public class Database {
 	}
 
 	public void limit(int offset, int quantity) {
-		queryLimit = "LIMIT " + offset + ", " + quantity;
+		queryLimit = "LIMIT " + quantity + " OFFSET " + offset;
 		limit = true;
 	}
 
