@@ -32,6 +32,7 @@ public class ModelLinker {
 
 	public void setLink(String clazz, String foreignKeyAttributeName,
 			String foreignKeyTable) {
+		clazz = getLastPartClass(clazz);
 		Map<String, String> link = links.get(clazz);
 		if (link == null) {
 			link = new HashMap<String, String>();
@@ -56,6 +57,7 @@ public class ModelLinker {
 			InstantiationException, SQLException {
 		List<ObjectRelational> list = null;
 		String klass = getLastPartClass(obj.getClass().getName());
+		clazz = getLastPartClass(clazz);
 		Model<ObjectRelational> model = models.get(klass);
 		String pk = model.getPrimaryKeyAttributeName();
 		Map<String, String> link = links.get(clazz);
@@ -64,7 +66,7 @@ public class ModelLinker {
 				.iterator();
 		while (iterator.hasNext()) {
 			Map.Entry<String, String> mapEntry = iterator.next();
-			if (mapEntry.getValue().equals(klass)) {
+			if (getLastPartClass(mapEntry.getValue()).equals(klass)) {
 				foreignAttribute = mapEntry.getKey();
 				break;
 			}
@@ -103,8 +105,8 @@ public class ModelLinker {
 		Object foreignKeyValue = obj.getFieldValue(obj
 				.getField(foreignKeyAttributeName));
 		if (foreignKeyValue != null) {
-			Model<ObjectRelational> model = models.get(links.get(clazz).get(
-					foreignKeyAttributeName));
+			Model<ObjectRelational> model = models.get(getLastPartClass(links
+					.get(clazz).get(foreignKeyAttributeName)));
 			result = model.get(foreignKeyValue);
 		}
 		return result;
