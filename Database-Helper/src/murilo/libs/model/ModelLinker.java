@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import murilo.libs.facade.ObjectRelational;
+import murilo.libs.relational.ObjectRelational;
 
 public class ModelLinker {
 

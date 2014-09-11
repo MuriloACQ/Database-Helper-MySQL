@@ -1,4 +1,4 @@
-package murilo.libs.facade.loader;
+package murilo.libs.relational.loader;
 
 import static murilo.libs.utils.Utils.firstLetterToUpperCase;
 import static murilo.libs.utils.Utils.snakeToCamelCase;
@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import murilo.libs.facade.ObjectRelational;
-import murilo.libs.facade.loader.exceptions.CompilerNotFoundException;
-import murilo.libs.facade.loader.exceptions.ObjectRelationalBuilderException;
+import murilo.libs.relational.ObjectRelational;
+import murilo.libs.relational.loader.exceptions.CompilerNotFoundException;
+import murilo.libs.relational.loader.exceptions.ObjectRelationalBuilderException;
 
 public class ObjectRelationalBuilder {
 
@@ -99,7 +99,7 @@ public class ObjectRelationalBuilder {
 		String clazz = "";
 		if (pack != null)
 			clazz += "package " + pack + ";\n\n";
-		clazz += "import murilo.libs.facade.ObjectRelational;\n";
+		clazz += "import murilo.libs.relational.ObjectRelational;\n";
 		for (String importEntry : imports) {
 			clazz += "import " + importEntry + ";\n";
 		}

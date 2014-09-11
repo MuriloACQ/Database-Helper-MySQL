@@ -17,8 +17,8 @@ import java.util.Map;
 
 import murilo.libs.database.Connector;
 import murilo.libs.database.Database;
-import murilo.libs.facade.ObjectRelacionalFactory;
-import murilo.libs.facade.ObjectRelational;
+import murilo.libs.relational.ObjectRelacionalFactory;
+import murilo.libs.relational.ObjectRelational;
 
 public class Model<T extends ObjectRelational> {
 

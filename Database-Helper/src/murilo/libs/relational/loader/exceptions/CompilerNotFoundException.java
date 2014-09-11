@@ -1,4 +1,4 @@
-package murilo.libs.facade.loader.exceptions;
+package murilo.libs.relational.loader.exceptions;
 
 public class CompilerNotFoundException extends Exception {
 

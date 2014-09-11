@@ -8,7 +8,7 @@
  * @email macquadros@gmail.com
  */
 
-package murilo.libs.facade;
+package murilo.libs.relational;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
