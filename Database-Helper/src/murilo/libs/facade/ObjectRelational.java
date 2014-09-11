@@ -10,6 +10,7 @@
 
 package murilo.libs.facade;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -22,7 +23,9 @@ import com.mysql.jdbc.ResultSet;
 import static murilo.libs.utils.Utils.camelToSnakeCase;
 import static murilo.libs.utils.Utils.firstLetterToUpperCase;
 
-public class ObjectRelational {
+public class ObjectRelational implements Cloneable, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	public static final int SNAKELOWERCASE_TO_CAMELCASE = 1,
 			SNAKEUPPERCASE_TO_CAMELCASE = 2, UPPERCASE_TO_LOWERCASE = 3,
@@ -271,4 +274,32 @@ public class ObjectRelational {
 		return string.replace(", }", "}");
 	}
 
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		boolean result = true;
+		Class<?> clazz = this.getClass();
+		if (clazz.equals(obj.getClass())) {
+			Field[] fields = clazz.getDeclaredFields();
+			for (int i = 0; i < fields.length; i++) {
+				try {
+					if (!this.getFieldValue(fields[i]).equals(
+							((ObjectRelational) obj)
+									.getFieldValue(fields[i]))) {
+						result = false;
+						break;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		} else {
+			result = false;
+		}
+		return result;
+	}
 }
