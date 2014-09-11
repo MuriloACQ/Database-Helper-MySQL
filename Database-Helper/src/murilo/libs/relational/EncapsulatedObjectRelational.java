@@ -1,10 +1,12 @@
 package murilo.libs.relational;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EncapsulatedObjectRelational<T extends ObjectRelational> implements Serializable {
+public class EncapsulatedObjectRelational<T extends ObjectRelational>
+		implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private final T original;
@@ -34,9 +36,20 @@ public class EncapsulatedObjectRelational<T extends ObjectRelational> implements
 					changes.put(original.getColumnName(fields[i].getName()),
 							changeable.getFieldValueAsString(fields[i]));
 				}
+			} catch (NullPointerException e) {
+				try {
+					if (original.getFieldValue(fields[i]) != changeable
+							.getFieldValue(fields[i])) {
+						changes.put(
+								original.getColumnName(fields[i].getName()),
+								changeable.getFieldValueAsString(fields[i]));
+					}
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
-			}
+			} 
 		}
 		return changes;
 	}

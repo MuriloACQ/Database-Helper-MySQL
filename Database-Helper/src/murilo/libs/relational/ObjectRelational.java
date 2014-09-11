@@ -288,14 +288,23 @@ public class ObjectRelational implements Cloneable, Serializable {
 			for (int i = 0; i < fields.length; i++) {
 				try {
 					if (!this.getFieldValue(fields[i]).equals(
-							((ObjectRelational) obj)
-									.getFieldValue(fields[i]))) {
+							((ObjectRelational) obj).getFieldValue(fields[i]))) {
 						result = false;
 						break;
 					}
+				} catch (NullPointerException e) {
+					try {
+						if (this.getFieldValue(fields[i]) != ((ObjectRelational) obj)
+								.getFieldValue(fields[i])) {
+							result = false;
+							break;
+						}
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
-				}
+				} 
 			}
 		} else {
 			result = false;
