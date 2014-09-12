@@ -365,7 +365,9 @@ public class Model<T extends ObjectRelational> {
 			IllegalAccessException, InstantiationException,
 			NoSuchMethodException, SecurityException,
 			InvocationTargetException, SQLException, NoSuchFieldException {
-		delete(get(value));
+		T t = newInstance();
+		t.setFieldValue(t.getField(primaryKey), value);
+		delete(t);
 	}
 
 	/**
