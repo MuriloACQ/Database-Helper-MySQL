@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class EncapsulatedObjectRelational<T extends ObjectRelational>
-		implements Serializable {
+		implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 	private final T original;
@@ -74,6 +74,12 @@ public class EncapsulatedObjectRelational<T extends ObjectRelational>
 	@Override
 	public boolean equals(Object obj) {
 		return changeable.equals(obj);
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public EncapsulatedObjectRelational<T> clone() throws CloneNotSupportedException {
+		return (EncapsulatedObjectRelational<T>) super.clone();
 	}
 
 }

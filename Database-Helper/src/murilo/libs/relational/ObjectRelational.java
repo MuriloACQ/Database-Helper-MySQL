@@ -275,8 +275,8 @@ public class ObjectRelational implements Cloneable, Serializable {
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
+	public ObjectRelational clone() throws CloneNotSupportedException {
+		return (ObjectRelational) super.clone();
 	}
 
 	@Override
