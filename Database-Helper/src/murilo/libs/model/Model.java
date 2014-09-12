@@ -17,6 +17,7 @@ import java.util.Map;
 
 import murilo.libs.database.Connector;
 import murilo.libs.database.Database;
+import murilo.libs.relational.EncapsulatedObjectRelational;
 import murilo.libs.relational.ObjectRelacionalFactory;
 import murilo.libs.relational.ObjectRelational;
 
@@ -280,6 +281,17 @@ public class Model<T extends ObjectRelational> {
 		db.where(primaryKey, export.get(primaryKey));
 		export.remove(primaryKey);
 		db.update(export, table);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void update(EncapsulatedObjectRelational<?> et) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException, NoSuchFieldException {
+		Map<String, String> export = et.export();
+		if(!export.isEmpty()) {
+			T t = (T) et.get();
+			String pk = t.getColumnName(primaryKey);
+			db.where(pk, t.getFieldValueAsString(t.getField(primaryKey)));
+			db.update(export, table);
+		}
 	}
 
 	/**

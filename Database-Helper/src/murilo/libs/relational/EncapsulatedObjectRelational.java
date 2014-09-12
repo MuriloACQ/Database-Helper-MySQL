@@ -2,7 +2,9 @@ package murilo.libs.relational;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class EncapsulatedObjectRelational<T extends ObjectRelational>
@@ -49,9 +51,24 @@ public class EncapsulatedObjectRelational<T extends ObjectRelational>
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-			} 
+			}
 		}
 		return changes;
+	}
+
+	public static List<EncapsulatedObjectRelational<ObjectRelational>> encapulate(
+			List<ObjectRelational> list) {
+		List<EncapsulatedObjectRelational<ObjectRelational>> encapsulatedList = new ArrayList<EncapsulatedObjectRelational<ObjectRelational>>();
+		for (ObjectRelational obj : list) {
+			encapsulatedList
+					.add(new EncapsulatedObjectRelational<ObjectRelational>(obj));
+		}
+		return encapsulatedList;
+	}
+	
+	@Override
+	public String toString() {
+		return "encapsulated " + changeable.toString();
 	}
 
 }
