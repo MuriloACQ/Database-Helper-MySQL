@@ -70,5 +70,13 @@ public class EncapsulatedObjectRelational<T extends ObjectRelational>
 	public String toString() {
 		return "encapsulated " + changeable.toString();
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public boolean equals(Object obj) {
+		if (obj instanceof EncapsulatedObjectRelational<?>)
+			obj = ((EncapsulatedObjectRelational<ObjectRelational>) obj).get();
+		return changeable.equals(obj);
+	}
 
 }

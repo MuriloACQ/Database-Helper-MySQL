@@ -280,8 +280,11 @@ public class ObjectRelational implements Cloneable, Serializable {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public boolean equals(Object obj) {
 		boolean result = true;
+		if (obj instanceof EncapsulatedObjectRelational<?>)
+			obj = ((EncapsulatedObjectRelational<ObjectRelational>) obj).get();
 		Class<?> clazz = this.getClass();
 		if (clazz.equals(obj.getClass())) {
 			Field[] fields = clazz.getDeclaredFields();
