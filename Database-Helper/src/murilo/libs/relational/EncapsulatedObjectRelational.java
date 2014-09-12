@@ -56,7 +56,7 @@ public class EncapsulatedObjectRelational<T extends ObjectRelational>
 		return changes;
 	}
 
-	public static List<EncapsulatedObjectRelational<ObjectRelational>> encapulate(
+	public static List<EncapsulatedObjectRelational<ObjectRelational>> encapsulate(
 			List<ObjectRelational> list) {
 		List<EncapsulatedObjectRelational<ObjectRelational>> encapsulatedList = new ArrayList<EncapsulatedObjectRelational<ObjectRelational>>();
 		for (ObjectRelational obj : list) {
