@@ -72,10 +72,7 @@ public class EncapsulatedObjectRelational<T extends ObjectRelational>
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public boolean equals(Object obj) {
-		if (obj instanceof EncapsulatedObjectRelational<?>)
-			obj = ((EncapsulatedObjectRelational<ObjectRelational>) obj).get();
 		return changeable.equals(obj);
 	}
 
