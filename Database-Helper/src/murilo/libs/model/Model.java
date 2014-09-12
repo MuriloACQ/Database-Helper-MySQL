@@ -303,6 +303,26 @@ public class Model<T extends ObjectRelational> {
 	}
 
 	/**
+	 * Delete by primary key
+	 * 
+	 * @param value
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws InvocationTargetException
+	 * @throws SQLException
+	 * @throws NoSuchFieldException
+	 */
+	public void delete(Object value) throws IllegalArgumentException,
+			IllegalAccessException, InstantiationException,
+			NoSuchMethodException, SecurityException,
+			InvocationTargetException, SQLException, NoSuchFieldException {
+		delete(get(value));
+	}
+
+	/**
 	 * Set auto generated id (Integer) in a recent inserted object
 	 * 
 	 * @param id
