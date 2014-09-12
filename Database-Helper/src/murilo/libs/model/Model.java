@@ -282,11 +282,25 @@ public class Model<T extends ObjectRelational> {
 		export.remove(primaryKey);
 		db.update(export, table);
 	}
-	
+
+	/**
+	 * Update a T object in database table keeping null values
+	 * 
+	 * @param et
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchFieldException
+	 */
 	@SuppressWarnings("unchecked")
-	public void update(EncapsulatedObjectRelational<?> et) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException, NoSuchFieldException {
+	public void update(EncapsulatedObjectRelational<?> et)
+			throws IllegalArgumentException, IllegalAccessException,
+			NoSuchMethodException, SecurityException,
+			InvocationTargetException, NoSuchFieldException {
 		Map<String, String> export = et.export();
-		if(!export.isEmpty()) {
+		if (!export.isEmpty()) {
 			T t = (T) et.get();
 			String pk = t.getColumnName(primaryKey);
 			db.where(pk, t.getFieldValueAsString(t.getField(primaryKey)));
@@ -312,6 +326,26 @@ public class Model<T extends ObjectRelational> {
 		db.where(primaryKey, export.get(primaryKey));
 		db.delete(table);
 		t = null;
+	}
+
+	/**
+	 * Delete a T object from database table
+	 * 
+	 * @param et
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchFieldException
+	 * @throws SQLException
+	 */
+	public void delete(EncapsulatedObjectRelational<?> et)
+			throws IllegalArgumentException, IllegalAccessException,
+			InstantiationException, NoSuchMethodException, SecurityException,
+			InvocationTargetException, NoSuchFieldException, SQLException {
+		delete(et.get());
 	}
 
 	/**
