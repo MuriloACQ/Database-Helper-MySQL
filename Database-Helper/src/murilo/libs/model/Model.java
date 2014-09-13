@@ -106,7 +106,7 @@ public class Model<T extends ObjectRelational> {
 	 * @throws NoSuchFieldException
 	 * @throws SQLException
 	 */
-	public EncapsulatedObjectRelational<T> getEncapuslated(Object value)
+	public EncapsulatedObjectRelational<T> getEncapsulated(Object value)
 			throws IllegalArgumentException, IllegalAccessException,
 			InstantiationException, NoSuchMethodException, SecurityException,
 			InvocationTargetException, NoSuchFieldException, SQLException {
@@ -328,6 +328,25 @@ public class Model<T extends ObjectRelational> {
 	}
 
 	/**
+	 * Insert a T object in the database table
+	 * 
+	 * @param et
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchFieldException
+	 */
+	public Integer insertReturningGeneratedId(EncapsulatedObjectRelational<T> et)
+			throws IllegalArgumentException, IllegalAccessException,
+			NoSuchMethodException, SecurityException,
+			InvocationTargetException, NoSuchFieldException {
+		return insertReturningGeneratedId(et.get());
+	}
+
+	/**
 	 * Insert a T object in the database table and retrieve new object from
 	 * table
 	 * 
@@ -348,6 +367,31 @@ public class Model<T extends ObjectRelational> {
 			InstantiationException, SQLException {
 		insert(t);
 		return get(t);
+	}
+
+	/**
+	 * Insert a T object in the database table and retrieve new object from
+	 * table
+	 * 
+	 * @param et
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchFieldException
+	 * @throws InstantiationException
+	 * @throws SQLException
+	 */
+	public EncapsulatedObjectRelational<T> insertReturningUpdatedObject(
+			EncapsulatedObjectRelational<T> et)
+			throws IllegalArgumentException, IllegalAccessException,
+			NoSuchMethodException, SecurityException,
+			InvocationTargetException, NoSuchFieldException,
+			InstantiationException, SQLException {
+		return new EncapsulatedObjectRelational<T>(
+				insertReturningUpdatedObject(et.get()));
 	}
 
 	/**
