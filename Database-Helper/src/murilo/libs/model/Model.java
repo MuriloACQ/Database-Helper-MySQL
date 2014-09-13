@@ -10,6 +10,7 @@ package murilo.libs.model;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -92,6 +93,27 @@ public class Model<T extends ObjectRelational> {
 	}
 
 	/**
+	 * Return T encapsulated object by primary key value
+	 * 
+	 * @param value
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchFieldException
+	 * @throws SQLException
+	 */
+	public EncapsulatedObjectRelational<T> getEncapuslated(Object value)
+			throws IllegalArgumentException, IllegalAccessException,
+			InstantiationException, NoSuchMethodException, SecurityException,
+			InvocationTargetException, NoSuchFieldException, SQLException {
+		return new EncapsulatedObjectRelational<T>(get(value));
+	}
+
+	/**
 	 * Get a updated instance of T
 	 * 
 	 * @param t
@@ -115,6 +137,28 @@ public class Model<T extends ObjectRelational> {
 			return list.get(0);
 		}
 		return null;
+	}
+
+	/**
+	 * Get a updated instance of encapsulated object
+	 * 
+	 * @param et
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchFieldException
+	 * @throws SQLException
+	 */
+	public EncapsulatedObjectRelational<T> getEncapsulated(
+			EncapsulatedObjectRelational<T> et)
+			throws IllegalArgumentException, IllegalAccessException,
+			InstantiationException, NoSuchMethodException, SecurityException,
+			InvocationTargetException, NoSuchFieldException, SQLException {
+		return new EncapsulatedObjectRelational<T>(get(et.get()));
 	}
 
 	/**
@@ -145,6 +189,28 @@ public class Model<T extends ObjectRelational> {
 	}
 
 	/**
+	 * Get a specific T encapsulated object
+	 * 
+	 * @param uniqueIdentifier
+	 * @param value
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws InvocationTargetException
+	 * @throws SQLException
+	 */
+	public EncapsulatedObjectRelational<T> getEncapsulated(
+			String uniqueIdentifier, String value)
+			throws IllegalArgumentException, IllegalAccessException,
+			InstantiationException, NoSuchMethodException, SecurityException,
+			InvocationTargetException, SQLException {
+		return new EncapsulatedObjectRelational<T>(get(uniqueIdentifier, value));
+	}
+
+	/**
 	 * Retrieve a list of T objects
 	 * 
 	 * @return list of T objects
@@ -164,6 +230,29 @@ public class Model<T extends ObjectRelational> {
 	}
 
 	/**
+	 * Retrieve a list of T encapsulated objects
+	 * 
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws InvocationTargetException
+	 * @throws SQLException
+	 */
+	public List<EncapsulatedObjectRelational<T>> listEncapsulated()
+			throws IllegalArgumentException, IllegalAccessException,
+			InstantiationException, NoSuchMethodException, SecurityException,
+			InvocationTargetException, SQLException {
+		List<EncapsulatedObjectRelational<T>> list = new ArrayList<EncapsulatedObjectRelational<T>>();
+		for (T t : list()) {
+			list.add(new EncapsulatedObjectRelational<T>(t));
+		}
+		return list;
+	}
+
+	/**
 	 * Insert a T object in the database table
 	 * 
 	 * @param t
@@ -179,6 +268,24 @@ public class Model<T extends ObjectRelational> {
 			InvocationTargetException, NoSuchFieldException {
 		Integer id = db.insert(removeNullValues(t.export()), table);
 		setId(id, t);
+	}
+
+	/**
+	 * Insert a T object in the database table
+	 * 
+	 * @param et
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchFieldException
+	 */
+	public void insert(EncapsulatedObjectRelational<T> et)
+			throws IllegalArgumentException, IllegalAccessException,
+			NoSuchMethodException, SecurityException,
+			InvocationTargetException, NoSuchFieldException {
+		insert(et.get());
 	}
 
 	/**
