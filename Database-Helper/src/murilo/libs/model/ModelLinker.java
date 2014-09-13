@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import murilo.libs.relational.EncapsulatedObjectRelational;
 import murilo.libs.relational.ObjectRelational;
 
 public class ModelLinker {
@@ -50,6 +51,26 @@ public class ModelLinker {
 		return get(clazz, obj, foreignKeyAttributeName);
 	}
 
+	public EncapsulatedObjectRelational<ObjectRelational> getEncapsulated(
+			EncapsulatedObjectRelational<ObjectRelational> eobj,
+			String foreignKeyAttributeName) throws IllegalArgumentException,
+			IllegalAccessException, NoSuchMethodException, SecurityException,
+			InvocationTargetException, NoSuchFieldException,
+			InstantiationException, SQLException {
+		return new EncapsulatedObjectRelational<ObjectRelational>(get(
+				eobj.get(), foreignKeyAttributeName));
+	}
+
+	public EncapsulatedObjectRelational<ObjectRelational> getEncapsulated(
+			ObjectRelational obj, String foreignKeyAttributeName)
+			throws IllegalArgumentException, IllegalAccessException,
+			NoSuchMethodException, SecurityException,
+			InvocationTargetException, NoSuchFieldException,
+			InstantiationException, SQLException {
+		return new EncapsulatedObjectRelational<ObjectRelational>(get(obj,
+				foreignKeyAttributeName));
+	}
+
 	public List<ObjectRelational> getExported(ObjectRelational obj, String clazz)
 			throws IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, SecurityException,
@@ -80,6 +101,26 @@ public class ModelLinker {
 		return list;
 	}
 
+	public List<EncapsulatedObjectRelational<ObjectRelational>> getEncapsulatedExported(
+			EncapsulatedObjectRelational<ObjectRelational> eobj, String clazz)
+			throws IllegalArgumentException, IllegalAccessException,
+			NoSuchMethodException, SecurityException,
+			InvocationTargetException, NoSuchFieldException,
+			InstantiationException, SQLException {
+		return EncapsulatedObjectRelational.encapsulate(getExported(eobj.get(),
+				clazz));
+	}
+
+	public List<EncapsulatedObjectRelational<ObjectRelational>> getEncapsulatedExported(
+			ObjectRelational obj, String clazz)
+			throws IllegalArgumentException, IllegalAccessException,
+			NoSuchMethodException, SecurityException,
+			InvocationTargetException, NoSuchFieldException,
+			InstantiationException, SQLException {
+		return EncapsulatedObjectRelational
+				.encapsulate(getExported(obj, clazz));
+	}
+
 	public List<ObjectRelational> get(ObjectRelational obj)
 			throws IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, SecurityException,
@@ -94,6 +135,23 @@ public class ModelLinker {
 				list.add(foreignObj);
 		}
 		return list;
+	}
+
+	public List<EncapsulatedObjectRelational<ObjectRelational>> getEncapsulated(
+			EncapsulatedObjectRelational<ObjectRelational> eobj)
+			throws IllegalArgumentException, IllegalAccessException,
+			NoSuchMethodException, SecurityException,
+			InvocationTargetException, NoSuchFieldException,
+			InstantiationException, SQLException {
+		return EncapsulatedObjectRelational.encapsulate(get(eobj.get()));
+	}
+
+	public List<EncapsulatedObjectRelational<ObjectRelational>> getEncapsulated(
+			ObjectRelational obj) throws IllegalArgumentException,
+			IllegalAccessException, NoSuchMethodException, SecurityException,
+			InvocationTargetException, NoSuchFieldException,
+			InstantiationException, SQLException {
+		return EncapsulatedObjectRelational.encapsulate(get(obj));
 	}
 
 	private ObjectRelational get(String clazz, ObjectRelational obj,
