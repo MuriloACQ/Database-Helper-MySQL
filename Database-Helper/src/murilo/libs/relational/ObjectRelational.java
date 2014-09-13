@@ -10,7 +10,9 @@
 
 package murilo.libs.relational;
 
-import java.io.Serializable;
+import static murilo.libs.utils.Utils.camelToSnakeCase;
+import static murilo.libs.utils.Utils.firstLetterToUpperCase;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -20,13 +22,8 @@ import java.util.Map;
 
 import com.mysql.jdbc.ResultSet;
 
-import static murilo.libs.utils.Utils.camelToSnakeCase;
-import static murilo.libs.utils.Utils.firstLetterToUpperCase;
-
-public class ObjectRelational implements Cloneable, Serializable {
-
-	private static final long serialVersionUID = 1L;
-
+public class ObjectRelational implements Cloneable {
+	
 	public static final int SNAKELOWERCASE_TO_CAMELCASE = 1,
 			SNAKEUPPERCASE_TO_CAMELCASE = 2, UPPERCASE_TO_LOWERCASE = 3,
 			NONE = 0;

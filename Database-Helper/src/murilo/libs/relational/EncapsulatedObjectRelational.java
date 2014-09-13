@@ -1,6 +1,5 @@
 package murilo.libs.relational;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,9 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 public class EncapsulatedObjectRelational<T extends ObjectRelational>
-		implements Serializable, Cloneable {
+		implements Cloneable {
 
-	private static final long serialVersionUID = 1L;
 	private final T original;
 	private T changeable;
 
