@@ -13,22 +13,25 @@ package murilo.libs.relational;
 import static murilo.libs.utils.Utils.camelToSnakeCase;
 import static murilo.libs.utils.Utils.firstLetterToUpperCase;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.mysql.jdbc.ResultSet;
 
-public class ObjectRelational implements Cloneable {
-	
+public class ObjectRelational implements Cloneable, Serializable {
+
+	private static final long serialVersionUID = 1L;
 	public static final int SNAKELOWERCASE_TO_CAMELCASE = 1,
 			SNAKEUPPERCASE_TO_CAMELCASE = 2, UPPERCASE_TO_LOWERCASE = 3,
 			NONE = 0;
 
-	private Field[] fields;
+	private transient Field[] fields;
 	private String prefix;
 	private int selectedCase;
 
@@ -70,8 +73,10 @@ public class ObjectRelational implements Cloneable {
 			InvocationTargetException {
 		fields = this.getClass().getDeclaredFields();
 		for (Field field : fields) {
-			String columnName = getColumnName(field.getName());
-			setFieldValue(field, resultSet.getObject(columnName));
+			if (!Modifier.isStatic(field.getModifiers())) {
+				String columnName = getColumnName(field.getName());
+				setFieldValue(field, resultSet.getObject(columnName));
+			}
 		}
 	}
 
@@ -92,8 +97,10 @@ public class ObjectRelational implements Cloneable {
 			fields = this.getClass().getDeclaredFields();
 		Map<String, String> map = new HashMap<String, String>();
 		for (Field field : fields) {
-			String columnName = getColumnName(field.getName());
-			map.put(columnName, getFieldValueAsString(field));
+			if (!Modifier.isStatic(field.getModifiers())) {
+				String columnName = getColumnName(field.getName());
+				map.put(columnName, getFieldValueAsString(field));
+			}
 		}
 		return map;
 	}
@@ -137,7 +144,7 @@ public class ObjectRelational implements Cloneable {
 	public void setFieldValue(Field field, Object value)
 			throws IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, SecurityException, InvocationTargetException {
-		if (field.getModifiers() == 1) {
+		if (Modifier.isPublic(field.getModifiers())) {
 			field.set(this, value);
 		} else if (value != null) {
 			Method method = this.getClass().getMethod(
@@ -252,20 +259,25 @@ public class ObjectRelational implements Cloneable {
 
 	@Override
 	public String toString() {
+		if (fields == null)
+			fields = this.getClass().getDeclaredFields();
 		String string = getClass().toString();
 		string = string.concat(" {");
 		for (Field field : fields) {
-			string = string.concat(field.getName());
-			string = string.concat("=");
-			try {
-				string += getFieldValueAsString(field);
-			} catch (IllegalArgumentException | IllegalAccessException
-					| NoSuchMethodException | SecurityException
-					| InvocationTargetException e) {
-				string = string.concat("[error: the value is not accessible]");
-				e.printStackTrace();
+			if (!Modifier.isStatic(field.getModifiers())) {
+				string = string.concat(field.getName());
+				string = string.concat("=");
+				try {
+					string += getFieldValueAsString(field);
+				} catch (IllegalArgumentException | IllegalAccessException
+						| NoSuchMethodException | SecurityException
+						| InvocationTargetException e) {
+					string = string
+							.concat("[error: the value is not accessible]");
+					e.printStackTrace();
+				}
+				string = string.concat(", ");
 			}
-			string = string.concat(", ");
 		}
 		string = string.concat("}");
 		return string.replace(", }", "}");
@@ -304,7 +316,7 @@ public class ObjectRelational implements Cloneable {
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-				} 
+				}
 			}
 		} else {
 			result = false;

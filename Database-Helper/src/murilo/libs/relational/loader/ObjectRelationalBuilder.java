@@ -105,6 +105,7 @@ public class ObjectRelationalBuilder {
 		}
 		clazz += "\npublic class ";
 		clazz += className + " extends ObjectRelational { \n\n";
+		clazz += "\tprivate static final long serialVersionUID = 1L;\n\n";
 		clazz += "\tpublic " + className + "() {\n";
 		clazz += "\t\tsuper();\n";
 		if (prefix != null)
