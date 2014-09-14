@@ -2,6 +2,7 @@ package murilo.libs.relational;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,8 +34,9 @@ public class EncapsulatedObjectRelational<T extends ObjectRelational>
 		Field[] fields = original.getClass().getDeclaredFields();
 		for (int i = 0; i < fields.length; i++) {
 			try {
-				if (!original.getFieldValue(fields[i]).equals(
-						changeable.getFieldValue(fields[i]))) {
+				if (!Modifier.isStatic(fields[i].getModifiers())
+						&& !original.getFieldValue(fields[i]).equals(
+								changeable.getFieldValue(fields[i]))) {
 					changes.put(original.getColumnName(fields[i].getName()),
 							changeable.getFieldValueAsString(fields[i]));
 				}
@@ -65,20 +67,21 @@ public class EncapsulatedObjectRelational<T extends ObjectRelational>
 		}
 		return encapsulatedList;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "encapsulated " + changeable.toString();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		return changeable.equals(obj);
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
-	public EncapsulatedObjectRelational<T> clone() throws CloneNotSupportedException {
+	public EncapsulatedObjectRelational<T> clone()
+			throws CloneNotSupportedException {
 		return (EncapsulatedObjectRelational<T>) super.clone();
 	}
 
