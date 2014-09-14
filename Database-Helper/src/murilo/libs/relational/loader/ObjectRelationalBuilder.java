@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import murilo.libs.model.exception.ModelException;
 import murilo.libs.relational.ObjectRelational;
-import murilo.libs.relational.loader.exceptions.CompilerNotFoundException;
-import murilo.libs.relational.loader.exceptions.ObjectRelationalBuilderException;
+import murilo.libs.relational.loader.exception.ObjectRelationalBuilderException;
 
 public class ObjectRelationalBuilder {
 
@@ -76,7 +76,7 @@ public class ObjectRelationalBuilder {
 
 	@SuppressWarnings("unchecked")
 	public Class<ObjectRelational> generate() throws IOException,
-			CompilerNotFoundException, ObjectRelationalBuilderException,
+			ModelException, ObjectRelationalBuilderException,
 			ClassNotFoundException {
 		if (className == null) {
 			throw new ObjectRelationalBuilderException(

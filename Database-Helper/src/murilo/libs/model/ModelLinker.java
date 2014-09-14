@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import murilo.libs.model.exception.ModelException;
 import murilo.libs.relational.EncapsulatedObjectRelational;
 import murilo.libs.relational.ObjectRelational;
 
@@ -46,7 +47,7 @@ public class ModelLinker {
 			String foreignKeyAttributeName) throws IllegalArgumentException,
 			IllegalAccessException, NoSuchMethodException, SecurityException,
 			InvocationTargetException, NoSuchFieldException,
-			InstantiationException, SQLException {
+			InstantiationException, SQLException, ModelException {
 		String clazz = getLastPartClass(obj.getClass().getName());
 		return get(clazz, obj, foreignKeyAttributeName);
 	}
@@ -56,7 +57,7 @@ public class ModelLinker {
 			String foreignKeyAttributeName) throws IllegalArgumentException,
 			IllegalAccessException, NoSuchMethodException, SecurityException,
 			InvocationTargetException, NoSuchFieldException,
-			InstantiationException, SQLException {
+			InstantiationException, SQLException, ModelException {
 		return new EncapsulatedObjectRelational<ObjectRelational>(get(
 				eobj.get(), foreignKeyAttributeName));
 	}
@@ -66,7 +67,7 @@ public class ModelLinker {
 			throws IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, SecurityException,
 			InvocationTargetException, NoSuchFieldException,
-			InstantiationException, SQLException {
+			InstantiationException, SQLException, ModelException {
 		return new EncapsulatedObjectRelational<ObjectRelational>(get(obj,
 				foreignKeyAttributeName));
 	}
@@ -74,8 +75,7 @@ public class ModelLinker {
 	public List<ObjectRelational> getExported(ObjectRelational obj, String clazz)
 			throws IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, SecurityException,
-			InvocationTargetException, NoSuchFieldException,
-			InstantiationException, SQLException {
+			InvocationTargetException, NoSuchFieldException, ModelException {
 		List<ObjectRelational> list = null;
 		String klass = getLastPartClass(obj.getClass().getName());
 		clazz = getLastPartClass(clazz);
@@ -106,7 +106,7 @@ public class ModelLinker {
 			throws IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, SecurityException,
 			InvocationTargetException, NoSuchFieldException,
-			InstantiationException, SQLException {
+			InstantiationException, SQLException, ModelException {
 		return EncapsulatedObjectRelational.encapsulate(getExported(eobj.get(),
 				clazz));
 	}
@@ -116,7 +116,7 @@ public class ModelLinker {
 			throws IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, SecurityException,
 			InvocationTargetException, NoSuchFieldException,
-			InstantiationException, SQLException {
+			InstantiationException, SQLException, ModelException {
 		return EncapsulatedObjectRelational
 				.encapsulate(getExported(obj, clazz));
 	}
@@ -125,7 +125,7 @@ public class ModelLinker {
 			throws IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, SecurityException,
 			InvocationTargetException, NoSuchFieldException,
-			InstantiationException, SQLException {
+			InstantiationException, SQLException, ModelException {
 		List<ObjectRelational> list = new ArrayList<ObjectRelational>();
 		String clazz = getLastPartClass(obj.getClass().getName());
 		Map<String, String> link = links.get(clazz);
@@ -142,7 +142,7 @@ public class ModelLinker {
 			throws IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, SecurityException,
 			InvocationTargetException, NoSuchFieldException,
-			InstantiationException, SQLException {
+			InstantiationException, SQLException, ModelException {
 		return EncapsulatedObjectRelational.encapsulate(get(eobj.get()));
 	}
 
@@ -150,7 +150,7 @@ public class ModelLinker {
 			ObjectRelational obj) throws IllegalArgumentException,
 			IllegalAccessException, NoSuchMethodException, SecurityException,
 			InvocationTargetException, NoSuchFieldException,
-			InstantiationException, SQLException {
+			InstantiationException, SQLException, ModelException {
 		return EncapsulatedObjectRelational.encapsulate(get(obj));
 	}
 
@@ -158,7 +158,7 @@ public class ModelLinker {
 			String foreignKeyAttributeName) throws IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException,
 			NoSuchMethodException, SecurityException, NoSuchFieldException,
-			InstantiationException, SQLException {
+			ModelException {
 		ObjectRelational result = null;
 		Object foreignKeyValue = obj.getFieldValue(obj
 				.getField(foreignKeyAttributeName));

@@ -8,8 +8,6 @@
 
 package murilo.libs.model;
 
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,6 +16,7 @@ import java.util.Map;
 
 import murilo.libs.database.Connector;
 import murilo.libs.database.Database;
+import murilo.libs.model.exception.ModelException;
 import murilo.libs.relational.EncapsulatedObjectRelational;
 import murilo.libs.relational.ObjectRelacionalFactory;
 import murilo.libs.relational.ObjectRelational;
@@ -61,12 +60,14 @@ public class Model<T extends ObjectRelational> {
 	 * Get a new instance of T class
 	 * 
 	 * @return new T object
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
+	 * @throws ModelException
 	 */
-	public T newInstance() throws InstantiationException,
-			IllegalAccessException {
-		return (T) reference.newInstance();
+	public T newInstance() throws ModelException {
+		try {
+			return (T) reference.newInstance();
+		} catch (Exception e) {
+			throw new ModelException(e);
+		}
 	}
 
 	/**
@@ -74,22 +75,16 @@ public class Model<T extends ObjectRelational> {
 	 * 
 	 * @param value
 	 * @return
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws SQLException
-	 * @throws NoSuchFieldException
+	 * @throws ModelException
 	 */
-	public T get(Object value) throws IllegalArgumentException,
-			IllegalAccessException, InstantiationException,
-			NoSuchMethodException, SecurityException,
-			InvocationTargetException, SQLException, NoSuchFieldException {
+	public T get(Object value) throws ModelException {
 		T t = newInstance();
-		t.setFieldValue(t.getField(primaryKey), value);
-		return get(t);
+		try {
+			t.setFieldValue(t.getField(primaryKey), value);
+			return get(t);
+		} catch (Exception e) {
+			throw new ModelException(e);
+		}
 	}
 
 	/**
@@ -97,19 +92,10 @@ public class Model<T extends ObjectRelational> {
 	 * 
 	 * @param value
 	 * @return
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws NoSuchFieldException
-	 * @throws SQLException
+	 * @throws ModelException
 	 */
 	public EncapsulatedObjectRelational<T> getEncapsulated(Object value)
-			throws IllegalArgumentException, IllegalAccessException,
-			InstantiationException, NoSuchMethodException, SecurityException,
-			InvocationTargetException, NoSuchFieldException, SQLException {
+			throws ModelException {
 		return new EncapsulatedObjectRelational<T>(get(value));
 	}
 
@@ -118,23 +104,19 @@ public class Model<T extends ObjectRelational> {
 	 * 
 	 * @param t
 	 * @return
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws SQLException
-	 * @throws NoSuchFieldException
+	 * @throws ModelException
 	 */
-	public T get(T t) throws IllegalArgumentException, IllegalAccessException,
-			InstantiationException, NoSuchMethodException, SecurityException,
-			InvocationTargetException, SQLException, NoSuchFieldException {
-		db.where(t.getColumnName(primaryKey),
-				t.getFieldValueAsString(t.getField(primaryKey)));
-		List<T> list = factory.getList(db.get(table));
-		if (list.size() == 1) {
-			return list.get(0);
+	public T get(T t) throws ModelException {
+		try {
+			db.where(t.getColumnName(primaryKey),
+					t.getFieldValueAsString(t.getField(primaryKey)));
+
+			List<T> list = factory.getList(db.get(table));
+			if (list.size() == 1) {
+				return list.get(0);
+			}
+		} catch (Exception e) {
+			throw new ModelException(e);
 		}
 		return null;
 	}
@@ -144,20 +126,10 @@ public class Model<T extends ObjectRelational> {
 	 * 
 	 * @param et
 	 * @return
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws NoSuchFieldException
-	 * @throws SQLException
+	 * @throws ModelException
 	 */
 	public EncapsulatedObjectRelational<T> getEncapsulated(
-			EncapsulatedObjectRelational<T> et)
-			throws IllegalArgumentException, IllegalAccessException,
-			InstantiationException, NoSuchMethodException, SecurityException,
-			InvocationTargetException, NoSuchFieldException, SQLException {
+			EncapsulatedObjectRelational<T> et) throws ModelException {
 		return new EncapsulatedObjectRelational<T>(get(et.get()));
 	}
 
@@ -168,22 +140,17 @@ public class Model<T extends ObjectRelational> {
 	 *            (database - column format)
 	 * @param value
 	 * @return T object
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws SQLException
+	 * @throws ModelException
 	 */
-	public T get(String uniqueIdentifier, String value)
-			throws IllegalArgumentException, IllegalAccessException,
-			InstantiationException, NoSuchMethodException, SecurityException,
-			InvocationTargetException, SQLException {
-		db.where(uniqueIdentifier, value);
-		List<T> list = factory.getList(db.get(table));
-		if (list.size() == 1) {
-			return list.get(0);
+	public T get(String uniqueIdentifier, String value) throws ModelException {
+		try {
+			db.where(uniqueIdentifier, value);
+			List<T> list = factory.getList(db.get(table));
+			if (list.size() == 1) {
+				return list.get(0);
+			}
+		} catch (Exception e) {
+			throw new ModelException(e);
 		}
 		return null;
 	}
@@ -194,19 +161,10 @@ public class Model<T extends ObjectRelational> {
 	 * @param uniqueIdentifier
 	 * @param value
 	 * @return
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws SQLException
+	 * @throws ModelException
 	 */
 	public EncapsulatedObjectRelational<T> getEncapsulated(
-			String uniqueIdentifier, String value)
-			throws IllegalArgumentException, IllegalAccessException,
-			InstantiationException, NoSuchMethodException, SecurityException,
-			InvocationTargetException, SQLException {
+			String uniqueIdentifier, String value) throws ModelException {
 		return new EncapsulatedObjectRelational<T>(get(uniqueIdentifier, value));
 	}
 
@@ -214,37 +172,24 @@ public class Model<T extends ObjectRelational> {
 	 * Retrieve a list of T objects
 	 * 
 	 * @return list of T objects
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws SQLException
+	 * @throws ModelException
 	 */
-	public List<T> list() throws IllegalArgumentException,
-			IllegalAccessException, InstantiationException,
-			NoSuchMethodException, SecurityException,
-			InvocationTargetException, SQLException {
-		return factory.getList(db.get(table));
+	public List<T> list() throws ModelException {
+		try {
+			return factory.getList(db.get(table));
+		} catch (Exception e) {
+			throw new ModelException(e);
+		}
 	}
 
 	/**
 	 * Retrieve a list of T encapsulated objects
 	 * 
 	 * @return
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws SQLException
+	 * @throws ModelException
 	 */
 	public List<EncapsulatedObjectRelational<T>> listEncapsulated()
-			throws IllegalArgumentException, IllegalAccessException,
-			InstantiationException, NoSuchMethodException, SecurityException,
-			InvocationTargetException, SQLException {
+			throws ModelException {
 		List<EncapsulatedObjectRelational<T>> list = new ArrayList<EncapsulatedObjectRelational<T>>();
 		for (T t : list()) {
 			list.add(new EncapsulatedObjectRelational<T>(t));
@@ -256,35 +201,25 @@ public class Model<T extends ObjectRelational> {
 	 * Insert a T object in the database table
 	 * 
 	 * @param t
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws NoSuchFieldException
+	 * @throws ModelException
 	 */
-	public void insert(T t) throws IllegalArgumentException,
-			IllegalAccessException, NoSuchMethodException, SecurityException,
-			InvocationTargetException, NoSuchFieldException {
-		Integer id = db.insert(removeNullValues(t.export()), table);
-		setId(id, t);
+	public void insert(T t) throws ModelException {
+		try {
+			Integer id = db.insert(removeNullValues(t.export()), table);
+			setId(id, t);
+		} catch (Exception e) {
+			throw new ModelException(e);
+		}
 	}
 
 	/**
 	 * Insert a T object in the database table
 	 * 
 	 * @param et
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws NoSuchFieldException
+	 * @throws ModelException
 	 */
 	public void insert(EncapsulatedObjectRelational<T> et)
-			throws IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, SecurityException,
-			InvocationTargetException, NoSuchFieldException {
+			throws ModelException {
 		insert(et.get());
 	}
 
@@ -292,18 +227,15 @@ public class Model<T extends ObjectRelational> {
 	 * Insert a T object in the database table keeping null values
 	 * 
 	 * @param t
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws NoSuchFieldException
+	 * @throws ModelException
 	 */
-	public void insertKeepingNullValues(T t) throws IllegalArgumentException,
-			IllegalAccessException, NoSuchMethodException, SecurityException,
-			InvocationTargetException, NoSuchFieldException {
-		Integer id = db.insert(t.export(), table);
-		setId(id, t);
+	public void insertKeepingNullValues(T t) throws ModelException {
+		try {
+			Integer id = db.insert(t.export(), table);
+			setId(id, t);
+		} catch (Exception e) {
+			throw new ModelException(e);
+		}
 	}
 
 	/**
@@ -311,20 +243,16 @@ public class Model<T extends ObjectRelational> {
 	 * 
 	 * @param t
 	 * @return auto generated id (Integer)
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws NoSuchFieldException
+	 * @throws ModelException
 	 */
-	public Integer insertReturningGeneratedId(T t)
-			throws IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, SecurityException,
-			InvocationTargetException, NoSuchFieldException {
-		Integer id = db.insert(removeNullValues(t.export()), table);
-		setId(id, t);
-		return id;
+	public Integer insertReturningGeneratedId(T t) throws ModelException {
+		try {
+			Integer id = db.insert(removeNullValues(t.export()), table);
+			setId(id, t);
+			return id;
+		} catch (Exception e) {
+			throw new ModelException(e);
+		}
 	}
 
 	/**
@@ -332,17 +260,10 @@ public class Model<T extends ObjectRelational> {
 	 * 
 	 * @param et
 	 * @return
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws NoSuchFieldException
+	 * @throws ModelException
 	 */
 	public Integer insertReturningGeneratedId(EncapsulatedObjectRelational<T> et)
-			throws IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, SecurityException,
-			InvocationTargetException, NoSuchFieldException {
+			throws ModelException {
 		return insertReturningGeneratedId(et.get());
 	}
 
@@ -352,19 +273,9 @@ public class Model<T extends ObjectRelational> {
 	 * 
 	 * @param t
 	 * @return new T object
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws NoSuchFieldException
-	 * @throws InstantiationException
-	 * @throws SQLException
+	 * @throws ModelException
 	 */
-	public T insertReturningUpdatedObject(T t) throws IllegalArgumentException,
-			IllegalAccessException, NoSuchMethodException, SecurityException,
-			InvocationTargetException, NoSuchFieldException,
-			InstantiationException, SQLException {
+	public T insertReturningUpdatedObject(T t) throws ModelException {
 		insert(t);
 		return get(t);
 	}
@@ -375,21 +286,10 @@ public class Model<T extends ObjectRelational> {
 	 * 
 	 * @param et
 	 * @return
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws NoSuchFieldException
-	 * @throws InstantiationException
-	 * @throws SQLException
+	 * @throws ModelException
 	 */
 	public EncapsulatedObjectRelational<T> insertReturningUpdatedObject(
-			EncapsulatedObjectRelational<T> et)
-			throws IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, SecurityException,
-			InvocationTargetException, NoSuchFieldException,
-			InstantiationException, SQLException {
+			EncapsulatedObjectRelational<T> et) throws ModelException {
 		return new EncapsulatedObjectRelational<T>(
 				insertReturningUpdatedObject(et.get()));
 	}
@@ -398,64 +298,57 @@ public class Model<T extends ObjectRelational> {
 	 * Update a T object in database table
 	 * 
 	 * @param t
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
+	 * @throws ModelException
 	 */
-	public void update(T t) throws IllegalArgumentException,
-			IllegalAccessException, NoSuchMethodException, SecurityException,
-			InvocationTargetException {
-		Map<String, String> export = removeNullValues(t.export());
-		String primaryKey = t.getColumnName(this.primaryKey);
-		db.where(primaryKey, export.get(primaryKey));
-		export.remove(primaryKey);
-		db.update(export, table);
+	public void update(T t) throws ModelException {
+		try {
+			Map<String, String> export = removeNullValues(t.export());
+			String primaryKey = t.getColumnName(this.primaryKey);
+			db.where(primaryKey, export.get(primaryKey));
+			export.remove(primaryKey);
+			db.update(export, table);
+		} catch (Exception e) {
+			throw new ModelException(e);
+		}
 	}
 
 	/**
 	 * Update a T object in database table keeping null values
 	 * 
 	 * @param t
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
+	 * @throws ModelException
 	 */
-	public void updateKeepingNullValues(T t) throws IllegalArgumentException,
-			IllegalAccessException, NoSuchMethodException, SecurityException,
-			InvocationTargetException {
-		Map<String, String> export = t.export();
-		String primaryKey = t.getColumnName(this.primaryKey);
-		db.where(primaryKey, export.get(primaryKey));
-		export.remove(primaryKey);
-		db.update(export, table);
+	public void updateKeepingNullValues(T t) throws ModelException {
+		try {
+			Map<String, String> export = t.export();
+			String primaryKey = t.getColumnName(this.primaryKey);
+			db.where(primaryKey, export.get(primaryKey));
+			export.remove(primaryKey);
+			db.update(export, table);
+		} catch (Exception e) {
+			throw new ModelException(e);
+		}
 	}
 
 	/**
 	 * Update a T object in database table keeping null values
 	 * 
 	 * @param et
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws NoSuchFieldException
+	 * @throws ModelException
 	 */
 	@SuppressWarnings("unchecked")
 	public void update(EncapsulatedObjectRelational<?> et)
-			throws IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, SecurityException,
-			InvocationTargetException, NoSuchFieldException {
-		Map<String, String> export = et.export();
-		if (!export.isEmpty()) {
-			T t = (T) et.get();
-			String pk = t.getColumnName(primaryKey);
-			db.where(pk, t.getFieldValueAsString(t.getField(primaryKey)));
-			db.update(export, table);
+			throws ModelException {
+		try {
+			Map<String, String> export = et.export();
+			if (!export.isEmpty()) {
+				T t = (T) et.get();
+				String pk = t.getColumnName(primaryKey);
+				db.where(pk, t.getFieldValueAsString(t.getField(primaryKey)));
+				db.update(export, table);
+			}
+		} catch (Exception e) {
+			throw new ModelException(e);
 		}
 	}
 
@@ -463,61 +356,45 @@ public class Model<T extends ObjectRelational> {
 	 * Delete a T object from database table
 	 * 
 	 * @param t
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
+	 * @throws ModelException
 	 */
-	public void delete(T t) throws IllegalArgumentException,
-			IllegalAccessException, NoSuchMethodException, SecurityException,
-			InvocationTargetException {
-		Map<String, String> export = t.export();
-		String primaryKey = t.getColumnName(this.primaryKey);
-		db.where(primaryKey, export.get(primaryKey));
-		db.delete(table);
-		t = null;
+	public void delete(T t) throws ModelException {
+		try {
+			Map<String, String> export = t.export();
+			String primaryKey = t.getColumnName(this.primaryKey);
+			db.where(primaryKey, export.get(primaryKey));
+			db.delete(table);
+			t = null;
+		} catch (Exception e) {
+			throw new ModelException(e);
+		}
 	}
 
 	/**
 	 * Delete a T object from database table
 	 * 
 	 * @param et
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws NoSuchFieldException
-	 * @throws SQLException
+	 * @throws ModelException
 	 */
+	@SuppressWarnings("unchecked")
 	public void delete(EncapsulatedObjectRelational<?> et)
-			throws IllegalArgumentException, IllegalAccessException,
-			InstantiationException, NoSuchMethodException, SecurityException,
-			InvocationTargetException, NoSuchFieldException, SQLException {
-		delete(et.get());
+			throws ModelException {
+		delete((T) et.get());
 	}
 
 	/**
 	 * Delete by primary key
 	 * 
 	 * @param value
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws SQLException
-	 * @throws NoSuchFieldException
+	 * @throws ModelException
 	 */
-	public void delete(Object value) throws IllegalArgumentException,
-			IllegalAccessException, InstantiationException,
-			NoSuchMethodException, SecurityException,
-			InvocationTargetException, SQLException, NoSuchFieldException {
+	public void delete(Object value) throws ModelException {
 		T t = newInstance();
-		t.setFieldValue(t.getField(primaryKey), value);
+		try {
+			t.setFieldValue(t.getField(primaryKey), value);
+		} catch (Exception e) {
+			throw new ModelException(e);
+		}
 		delete(t);
 	}
 
@@ -526,18 +403,15 @@ public class Model<T extends ObjectRelational> {
 	 * 
 	 * @param id
 	 * @param t
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws NoSuchFieldException
+	 * @throws ModelException
 	 */
-	private void setId(Integer id, T t) throws IllegalArgumentException,
-			IllegalAccessException, NoSuchMethodException, SecurityException,
-			InvocationTargetException, NoSuchFieldException {
+	private void setId(Integer id, T t) throws ModelException {
 		if (id != null) {
-			t.setFieldValue(t.getField(primaryKey), id);
+			try {
+				t.setFieldValue(t.getField(primaryKey), id);
+			} catch (Exception e) {
+				throw new ModelException(e);
+			}
 		}
 	}
 

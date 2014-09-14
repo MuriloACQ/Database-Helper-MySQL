@@ -1,4 +1,4 @@
-package murilo.libs.relational.loader.exceptions;
+package murilo.libs.relational.loader.exception;
 
 public class ObjectRelationalBuilderException extends Exception {
 

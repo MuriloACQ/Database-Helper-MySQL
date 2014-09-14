@@ -11,9 +11,9 @@ import murilo.libs.database.Connector;
 import murilo.libs.database.Metadata;
 import murilo.libs.model.Model;
 import murilo.libs.model.ModelLinker;
+import murilo.libs.model.exception.ModelException;
 import murilo.libs.relational.ObjectRelational;
-import murilo.libs.relational.loader.exceptions.CompilerNotFoundException;
-import murilo.libs.relational.loader.exceptions.ObjectRelationalBuilderException;
+import murilo.libs.relational.loader.exception.ObjectRelationalBuilderException;
 import static murilo.libs.utils.Utils.firstLetterToUpperCase;
 import static murilo.libs.utils.Utils.snakeToCamelCase;
 import static murilo.libs.utils.Utils.getLastPartClass;
@@ -55,7 +55,7 @@ public class DatabaseLoader {
 
 	public List<Class<ObjectRelational>> createVOs()
 			throws ObjectRelationalBuilderException, ClassNotFoundException,
-			IOException, CompilerNotFoundException {
+			IOException, ModelException {
 		classes = new ArrayList<Class<ObjectRelational>>();
 		tables = metadata.getTableNames();
 		for (String table : tables) {
@@ -79,7 +79,7 @@ public class DatabaseLoader {
 	@SuppressWarnings("unchecked")
 	public List<Class<ObjectRelational>> createVOsIfNotExistAndGetClasses()
 			throws ObjectRelationalBuilderException, ClassNotFoundException,
-			IOException, CompilerNotFoundException {
+			IOException, ModelException {
 		classes = new ArrayList<Class<ObjectRelational>>();
 		tables = metadata.getTableNames();
 		for (String table : tables) {
@@ -95,7 +95,7 @@ public class DatabaseLoader {
 
 	public Map<String, Model<ObjectRelational>> getModels()
 			throws ClassNotFoundException, ObjectRelationalBuilderException,
-			IOException, CompilerNotFoundException {
+			IOException, ModelException {
 		if (classes == null)
 			createVOsIfNotExistAndGetClasses();
 		if (classes != null) {
@@ -113,7 +113,7 @@ public class DatabaseLoader {
 
 	public ModelLinker getLinker() throws ClassNotFoundException,
 			ObjectRelationalBuilderException, IOException,
-			CompilerNotFoundException {
+			ModelException {
 		ModelLinker linker = null;
 		if (models == null)
 			getModels();
@@ -137,7 +137,7 @@ public class DatabaseLoader {
 
 	private Class<ObjectRelational> buildObjectRelational(String table)
 			throws ObjectRelationalBuilderException, ClassNotFoundException,
-			IOException, CompilerNotFoundException {
+			IOException, ModelException {
 		objectRelationalBuilder = new ObjectRelationalBuilder();
 		objectRelationalBuilder.setClassName(table);
 		if (forceUpdate)

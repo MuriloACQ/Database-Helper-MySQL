@@ -11,7 +11,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
-import murilo.libs.relational.loader.exceptions.CompilerNotFoundException;
+import murilo.libs.model.exception.ModelException;
 
 public class ClassLoader {
 
@@ -36,7 +36,7 @@ public class ClassLoader {
 	}
 
 	public Class<?> newClass(String className, String declaration)
-			throws IOException, CompilerNotFoundException,
+			throws IOException, ModelException,
 			ClassNotFoundException {
 		String filePath = "src";
 		String classPath = "";
@@ -55,7 +55,7 @@ public class ClassLoader {
 			fos.close();
 			JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 			if (compiler == null) {
-				throw new CompilerNotFoundException(
+				throw new ModelException(
 						"Maybe you should use jdk to running application instead of jre");
 			}
 			StandardJavaFileManager standardJavaFileManager = compiler
