@@ -35,6 +35,8 @@ public class ObjectRelational implements Cloneable, Serializable {
 	private String prefix;
 	private int selectedCase;
 
+	private ObjectRelational() {}
+	
 	/**
 	 * Set a prefix in each column of table
 	 * 
