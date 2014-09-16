@@ -130,7 +130,7 @@ public class Model<T extends ObjectRelational> {
 	 */
 	public EncapsulatedObjectRelational<T> getEncapsulated(
 			EncapsulatedObjectRelational<T> et) throws ModelException {
-		return new EncapsulatedObjectRelational<T>(get(et.get()));
+		return new EncapsulatedObjectRelational<T>(get((T) et.get()));
 	}
 
 	/**
