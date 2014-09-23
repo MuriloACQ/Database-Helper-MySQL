@@ -58,8 +58,11 @@ public class ModelLinker {
 			IllegalAccessException, NoSuchMethodException, SecurityException,
 			InvocationTargetException, NoSuchFieldException,
 			InstantiationException, SQLException, ModelException {
-		return new EncapsulatedObjectRelational<ObjectRelational>(get(
-				eobj.get(), foreignKeyAttributeName));
+		ObjectRelational obj = get(eobj.get(), foreignKeyAttributeName);
+		eobj = null;
+		if (obj != null)
+			eobj = new EncapsulatedObjectRelational<ObjectRelational>(obj);
+		return eobj;
 	}
 
 	public EncapsulatedObjectRelational<ObjectRelational> getEncapsulated(

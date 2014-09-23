@@ -96,7 +96,11 @@ public class Model<T extends ObjectRelational> {
 	 */
 	public EncapsulatedObjectRelational<T> getEncapsulated(Object value)
 			throws ModelException {
-		return new EncapsulatedObjectRelational<T>(get(value));
+		EncapsulatedObjectRelational<T> et = null;
+		T t = get(value);
+		if (t != null)
+			et = new EncapsulatedObjectRelational<T>(t);
+		return et;
 	}
 
 	/**
@@ -130,7 +134,11 @@ public class Model<T extends ObjectRelational> {
 	 */
 	public EncapsulatedObjectRelational<T> getEncapsulated(
 			EncapsulatedObjectRelational<T> et) throws ModelException {
-		return new EncapsulatedObjectRelational<T>(get((T) et.get()));
+		T t = get(et.get());
+		et = null;
+		if (t != null)
+			et = new EncapsulatedObjectRelational<T>(t);
+		return et;
 	}
 
 	/**
@@ -165,7 +173,11 @@ public class Model<T extends ObjectRelational> {
 	 */
 	public EncapsulatedObjectRelational<T> getEncapsulated(
 			String uniqueIdentifier, String value) throws ModelException {
-		return new EncapsulatedObjectRelational<T>(get(uniqueIdentifier, value));
+		T t = get(uniqueIdentifier, value);
+		EncapsulatedObjectRelational<T> et = null;
+		if(t != null)
+			et = new EncapsulatedObjectRelational<T>(t);
+		return et;
 	}
 
 	/**
