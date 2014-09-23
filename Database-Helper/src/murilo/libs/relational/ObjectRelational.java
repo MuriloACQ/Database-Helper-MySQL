@@ -298,6 +298,8 @@ public class ObjectRelational implements Cloneable, Serializable {
 		if (clazz.equals(obj.getClass())) {
 			Field[] fields = clazz.getDeclaredFields();
 			for (int i = 0; i < fields.length; i++) {
+				if (Modifier.isStatic(fields[i].getModifiers()))
+					continue;
 				try {
 					if (!this.getFieldValue(fields[i]).equals(
 							((ObjectRelational) obj).getFieldValue(fields[i]))) {
