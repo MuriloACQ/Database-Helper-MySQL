@@ -134,6 +134,10 @@ public class DatabaseLoader {
 		}
 		return linker;
 	}
+	
+	public List<Class<ObjectRelational>> getLoadedClasses() {
+		return classes;
+	}
 
 	private Class<ObjectRelational> buildObjectRelational(String table)
 			throws ObjectRelationalBuilderException, ClassNotFoundException,
